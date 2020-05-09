@@ -7,36 +7,35 @@ import {
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
-  Alert
+  Alert,
 } from "react-native";
 import { connect } from "react-redux";
-import { login } from "../../store/actions/auth";
+import { login, logout } from "../../store/actions/auth";
 import axios from "axios";
-
-const LoginScreen = ({ login, auth, navigation }) => {
+import AlertComponent from "../../components/AlertComponent";
+const LoginScreen = ({ login, auth, navigation, logout, LogoutAction }) => {
   useEffect(() => {
-    if (auth && auth.isAuthenticated) {
-      navigation.replace("Home");
-    }
-  }, [auth]);
+    logout();
+  }, []);
 
   const [formData, setFormData] = useState({
-    email: "eqweqwe",
-    password: ""
+    email: "trandaosimanh@gmail.com",
+    password: "admin",
   });
 
   const { email, password } = formData;
 
-  const onChange = name => value => {
+  const onChange = (name) => (value) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     login(formData);
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
+        <AlertComponent></AlertComponent>
         <View style={styles.input}>
           <Text keyboardType="email-address">Email:</Text>
           <TextInput
@@ -44,7 +43,7 @@ const LoginScreen = ({ login, auth, navigation }) => {
             placeholder="Enter your email"
             value={email}
             name="email"
-            onChangeText={e => {
+            onChangeText={(e) => {
               console.log(e);
               console.log("email ", email);
               onChange("email")(e);
@@ -65,7 +64,7 @@ const LoginScreen = ({ login, auth, navigation }) => {
         <View style={styles.buttonContainer}>
           <Button
             title="Login"
-            onPress={e => {
+            onPress={(e) => {
               onSubmit(encodeURIComponent);
             }}
           ></Button>
@@ -74,31 +73,31 @@ const LoginScreen = ({ login, auth, navigation }) => {
             onPress={() => navigation.navigate("Register")}
           ></Button>
         </View>
-        <Text>{auth.isAuthenticated}</Text>
+
         {auth.user && <Text>{auth.user.name}</Text>}
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    auth: state.auth
+    auth: state.auth,
   };
 };
 
 const styles = StyleSheet.create({
   input: {
     margin: 10,
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   container: {
     margin: 10,
-    flex: 1
+    flex: 1,
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around"
-  }
+    justifyContent: "space-around",
+  },
 });
-export default connect(mapStateToProps, { login })(LoginScreen);
+export default connect(mapStateToProps, { login, logout })(LoginScreen);

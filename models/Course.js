@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 
-const ChapterSchema = new mongoose.Schema(
+const CourseSchema = new mongoose.Schema(
   {
-    name: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "user",
+    },
     questionBank: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -23,10 +27,4 @@ const ChapterSchema = new mongoose.Schema(
   }
 );
 
-ChapterSchema.virtual("questions", {
-  ref: "Question",
-  localField: "_id",
-  foreignField: "chapter",
-  justOne: false,
-});
-module.exports = mongoose.model("Chapter", ChapterSchema);
+module.exports = mongoose.model("Course", CourseSchema);

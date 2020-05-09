@@ -98,7 +98,7 @@ const PrepareScreen = ({
         title="Start Quiz"
         onPress={() => {
           generateQuiz(chapter, diff);
-          navigation.replace("Quiz", { no: 0 });
+          navigation.replace("Quiz", { no: 0, totalTime: 500 });
         }}
       ></Button>
     </View>

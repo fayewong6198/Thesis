@@ -7,27 +7,28 @@ import {
   StyleSheet,
   TextInput,
   Keyboard,
-  Alert
+  Alert,
 } from "react-native";
 import { connect } from "react-redux";
 import { register } from "../../store/actions/auth";
 import axios from "axios";
+import AlertComponent from "../../components/AlertComponent";
 
 const RegisterScreen = ({ register, auth, navigation }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     confirmPassword: "",
-    name: ""
+    name: "",
   });
 
   const { email, password, name, confirmPassword } = formData;
 
-  const onChange = name => value => {
+  const onChange = (name) => (value) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     if (password !== confirmPassword) {
       Alert.alert("Password not match");
     } else {
@@ -37,6 +38,7 @@ const RegisterScreen = ({ register, auth, navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
+        <AlertComponent></AlertComponent>
         <View style={styles.input}>
           <Text keyboardType="email-address">Email:</Text>
           <TextInput
@@ -44,7 +46,7 @@ const RegisterScreen = ({ register, auth, navigation }) => {
             placeholder="Enter your email"
             value={email}
             name="email"
-            onChangeText={e => onChange("email")(e)}
+            onChangeText={(e) => onChange("email")(e)}
           ></TextInput>
         </View>
         <View style={styles.input}>
@@ -54,7 +56,7 @@ const RegisterScreen = ({ register, auth, navigation }) => {
             placeholder="Enter your name"
             value={name}
             name="email"
-            onChangeText={e => onChange("name")(e)}
+            onChangeText={(e) => onChange("name")(e)}
           ></TextInput>
         </View>
         <View style={styles.input}>
@@ -79,7 +81,7 @@ const RegisterScreen = ({ register, auth, navigation }) => {
         <View style={styles.buttonContainer}>
           <Button
             title="Register"
-            onPress={e => {
+            onPress={(e) => {
               onSubmit();
             }}
           ></Button>
@@ -94,24 +96,24 @@ const RegisterScreen = ({ register, auth, navigation }) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    auth: state.auth
+    auth: state.auth,
   };
 };
 
 const styles = StyleSheet.create({
   input: {
     margin: 10,
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
   container: {
     margin: 10,
-    flex: 1
+    flex: 1,
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around"
-  }
+    justifyContent: "space-around",
+  },
 });
 export default connect(mapStateToProps, { register })(RegisterScreen);

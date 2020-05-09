@@ -5,7 +5,10 @@ const connectDB = require("./config/db");
 const colors = require("colors");
 const bodyParser = require("body-parser");
 const errorHandler = require("./middlewares/error");
+const path = require("path");
+const fileupload = require("express-fileupload");
 
+const app = express();
 // LOad env vars
 dotenv.config({ path: "./config/config.env" });
 
@@ -15,8 +18,8 @@ connectDB();
 // Routes files
 const auth = require("./routes/auth");
 const questions = require("./routes/questions");
-
-const app = express();
+const user = require("./routes/user");
+const comment = require("./routes/comment");
 
 // Dev loggin middleware
 if (process.env.NODE_ENV === "development") {
@@ -26,9 +29,17 @@ if (process.env.NODE_ENV === "development") {
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
+// File uploading
+app.use(fileupload());
+
+// Set static folder
+app.use(express.static(path.join(__dirname, "public")));
+
 // Moute routers
 app.use("/auth", auth);
 app.use("/questions", questions);
+app.use("/user", user);
+app.use("/comment", comment);
 
 app.use(errorHandler);
 
