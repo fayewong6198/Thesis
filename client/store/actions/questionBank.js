@@ -9,12 +9,10 @@ import {
 } from "../type";
 import axios from "axios";
 
-<<<<<<< HEAD
+
+
 const IP = "http://192.168.0.101";
-=======
 // const IP = "http://192.168.0.103";
-const IP = "http://192.168.51.10";
->>>>>>> 1589bb723caa32386ce5fef071dee3e315f63898
 
 const config = {
   headers: {

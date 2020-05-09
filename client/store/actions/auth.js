@@ -86,18 +86,14 @@ export const register = (formData) => async (dispatch) => {
     const body = JSON.stringify(formData);
 
     const res = await axios.post(
-      "http://192.168.0.3:5000/auth/register",
+      IP + ":5000/auth/register",
       body,
       config
     );
 
     dispatch(setAlert("Register Success", "success"));
 
-    const res = await axios.post(
-      IP + ":5000/auth/register",
-      body,
-      config
-    );
+
     console.log(res.data);
     dispatch({
       type: REGISTER,
