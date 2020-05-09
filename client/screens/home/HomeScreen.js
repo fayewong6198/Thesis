@@ -1,17 +1,12 @@
 import React, { useEffect } from "react";
-import {
-  View,
-  Text,
-  Button,
-  FlatList,
-  TouchableNativeFeedback
-} from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { connect } from "react-redux";
 import axios from "axios";
 import { loadQuestionBank } from "../../store/actions/questionBank";
 import { logout, loadUser } from "../../store/actions/auth";
+import AlertComponent from "../../components/AlertComponent";
 
 const HomeScreen = ({
   loadQuestionBank,
@@ -19,11 +14,12 @@ const HomeScreen = ({
   auth,
   navigation,
   logout,
-  loadUser
+  loadUser,
 }) => {
   useEffect(() => {
+    console.log("Go to Home");
     if (auth.isAuthenticated) loadQuestionBank();
-  }, [auth]);
+  }, []);
   let preview = "Home";
   const IP = "http://192.168.0.101";
   const getDocument = async () => {
@@ -34,8 +30,8 @@ const HomeScreen = ({
       const Data = await FileSystem.readAsStringAsync(data.uri);
       const config = {
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       };
       try {
         const res = await axios.post(
@@ -52,7 +48,7 @@ const HomeScreen = ({
 
   return (
     <View>
-      <Text>{preview}</Text>
+      <AlertComponent></AlertComponent>
       <Text>{auth.user && auth.user.name}</Text>
       <Text>{questionBank.questionBanks.length}</Text>
       {questionBank.questionBanks.length > 0 ? (
@@ -74,25 +70,47 @@ const HomeScreen = ({
           <Text>No Question Bank found</Text>
         )}
       <View>
-        <Button
-          title="Log out"
-          onPress={() => {
-            logout();
-            navigation.replace("Login");
-          }}
-        ></Button>
-        <Button title="Choose File" onPress={() => getDocument()}></Button>
+        <View style={styles.button}>
+          <Button
+            title="Change Info"
+            onPress={() => navigation.push("UserInfo")}
+          ></Button>
+        </View>
+        <View style={styles.button}>
+          <Button
+            title="Manage Your Quiz"
+            onPress={() => navigation.push("ManageQuiz")}
+          ></Button>
+        </View>
+        <View style={styles.button}>
+          <Button
+            title="Your Course"
+            onPress={() => navigation.push("ManageCourse")}
+          ></Button>
+        </View>
+        <View style={styles.button}>
+          <Button
+            title="Add Question Bank"
+            onPress={() => getDocument()}
+          ></Button>
+        </View>
       </View>
     </View>
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-    questionBank: state.questionBank
   };
 };
+
+const styles = StyleSheet.create({
+  button: {
+    marginVertical: 10,
+    marginHorizontal: 20,
+  },
+});
 export default connect(mapStateToProps, { loadQuestionBank, logout, loadUser })(
   HomeScreen
 );

@@ -1,44 +1,44 @@
 const mongoose = require("mongoose");
-
+const Chapter = require("./Chapter");
 const QuestionSchema = new mongoose.Schema({
   text: {
     type: String,
-    required: true
+    required: true,
   },
   answer: {
     type: [String],
-    required: true
+    required: true,
   },
   rightAnswer: {
     type: String,
-    required: true
+    required: true,
   },
   difficulty: {
     type: Number,
-    required: true
+    required: true,
   },
   knowledge: {
     type: String,
-    required: true
+    required: true,
   },
   time: {
     type: Number,
-    required: true
+    required: true,
   },
   chapter: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "chapter"
+    ref: "Chapter",
   },
   questionBank: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "questionBank"
+    ref: "questionBank",
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("Question", QuestionSchema);

@@ -8,8 +8,6 @@ const User = require("../models/User");
 // @access  Public
 exports.getLogin = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: req.user });
-  console.log("Get login");
-  console.log("cc ", req.user);
 });
 
 // @desc  Login Page

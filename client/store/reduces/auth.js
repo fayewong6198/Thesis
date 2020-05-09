@@ -6,19 +6,22 @@ import {
   REGISTER_FAILED,
   LOGIN_FAILED,
   LOAD_USER_FAILED,
-  LOG_OUT
+  LOG_OUT,
+  UPDATE_USER_SUCCESS,
+  UPLOAD_AVATAR_SUCCESS,
+  UPDATE_USER_FAILED,
+  UPLOAD_AVATAR_FAILED,
 } from "../type";
 
 const initialState = {
   isAuthenticated: false,
   loading: false,
   user: null,
-  test: "asdasdasd"
 };
 
 import setAuthToken from "../../ultis/setAuthToken";
 
-const setToken = async payload => {
+const setToken = async (payload) => {
   const token = payload.data;
   await AsyncStorage.setItem("token", "Bearer " + token);
   setAuthToken("Bearer " + token);
@@ -34,18 +37,18 @@ export default function auth(state = initialState, action) {
     case LOGIN_SUCCESS:
     case REGISTER_SUCCESS:
       setToken(payload);
-      console.log("LOGIN SUCCESSFUL");
+
       return {
         ...state,
-        test: "successfull"
       };
     case LOAD_USER_SUCCESS:
-      console.log("LOAD_USER_SUCCESS ", payload.data);
+    case UPDATE_USER_SUCCESS:
+    case UPLOAD_AVATAR_SUCCESS:
+      // console.log("User reducer: " + user);
       return {
         ...state,
         isAuthenticated: true,
-        test: "successfull",
-        user: payload.data
+        user: payload.data,
       };
     case REGISTER_FAILED:
     case LOGIN_FAILED:
@@ -57,8 +60,10 @@ export default function auth(state = initialState, action) {
         ...state,
         isAuthenticated: false,
         loading: true,
-        user: null
+        user: null,
       };
+    case UPDATE_USER_FAILED:
+    case UPLOAD_AVATAR_FAILED:
     default:
       return state;
   }
