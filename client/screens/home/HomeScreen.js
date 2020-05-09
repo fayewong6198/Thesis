@@ -25,7 +25,7 @@ const HomeScreen = ({
     if (auth.isAuthenticated) loadQuestionBank();
   }, [auth]);
   let preview = "Home";
-  const IP = "http://192.168.0.103";
+  const IP = "http://192.168.0.101";
   const getDocument = async () => {
     const data = await DocumentPicker.getDocumentAsync();
     console.log(data);
@@ -71,8 +71,8 @@ const HomeScreen = ({
           keyExtractor={item => item._id}
         />
       ) : (
-        <Text>No Question Bank found</Text>
-      )}
+          <Text>No Question Bank found</Text>
+        )}
       <View>
         <Button
           title="Log out"

@@ -11,7 +11,7 @@ import axios from "axios";
 import setAuthToken from "../../ultis/setAuthToken";
 import { AsyncStorage } from "react-native";
 
-const IP = "http://192.168.0.103";
+const IP = "http://192.168.0.101";
 
 const config = {
   headers: {
@@ -70,7 +70,7 @@ export const register = formData => async dispatch => {
   const body = JSON.stringify(formData);
 
   const res = await axios.post(
-    "http://192.168.1.3:5000/auth/register",
+    IP + ":5000/auth/register",
     body,
     config
   );

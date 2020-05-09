@@ -10,7 +10,7 @@ import axios from "axios";
 import setAuthToken from "../../ultis/setAuthToken";
 import { AsyncStorage } from "react-native";
 
-const IP = "http://192.168.0.103";
+const IP = "http://192.168.0.101";
 
 const config = {
   headers: {
