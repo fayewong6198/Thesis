@@ -11,6 +11,10 @@ import {
   UPLOAD_AVATAR_SUCCESS,
   UPDATE_USER_FAILED,
   UPLOAD_AVATAR_FAILED,
+  ADD_COURSE_SUCCESS,
+  ADD_COURSE_FAILED,
+  REMOVE_COURSE_FAILED,
+  REMOVE_COURSE_SUCCESS
 } from "../type";
 
 const initialState = {
@@ -44,16 +48,24 @@ export default function auth(state = initialState, action) {
     case LOAD_USER_SUCCESS:
     case UPDATE_USER_SUCCESS:
     case UPLOAD_AVATAR_SUCCESS:
+    case ADD_COURSE_SUCCESS:
+    case REMOVE_COURSE_SUCCESS:
       // console.log("User reducer: " + user);
       return {
         ...state,
         isAuthenticated: true,
         user: payload.data,
       };
+
+    case ADD_COURSE_FAILED:
+      return {
+        ...state
+      }
     case REGISTER_FAILED:
     case LOGIN_FAILED:
     case LOG_OUT:
     case LOAD_USER_FAILED:
+    case REMOVE_COURSE_FAILED:
       console.log("LOAD USER FAILED");
       removeToken();
       return {

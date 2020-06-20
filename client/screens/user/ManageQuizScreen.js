@@ -9,6 +9,8 @@ import AlertComponent from "../../components/AlertComponent";
 const ManageQuizScreen = ({ questionBank, loadQuestionBank, navigation }) => {
   useEffect(() => {
     loadQuestionBank();
+
+    return () => {};
   }, []);
   return (
     <View>

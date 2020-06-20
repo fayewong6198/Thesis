@@ -2,14 +2,13 @@ import React, { useEffect } from "react";
 import { View, Text, Button, StyleSheet, FlatList } from "react-native";
 
 import { connect } from "react-redux";
-import { loadUserChapter } from "../../store/actions/questionBank";
+import { loadChapter, generateQuiz } from "../../store/actions/questionBank";
 
 import AlertComponent from "../../components/AlertComponent";
 
-const ChapterScreen = ({ chapters, loadUserChapter, route }) => {
-  const { QuestionBankId } = route.params;
+const ChapterScreen = ({ chapters, loadChapter, route }) => {
+  const { questionBankId } = route.params;
   useEffect(() => {
-    console.log(QuestionBankId);
     loadUserChapter(QuestionBankId);
   }, []);
   return (
@@ -26,7 +25,7 @@ const ChapterScreen = ({ chapters, loadUserChapter, route }) => {
           keyExtractor={(item) => item._id}
         />
       ) : (
-        <Text>No Chapter founds</Text>
+        <Text>No Chapter found</Text>
       )}
     </View>
   );
@@ -42,4 +41,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps, { loadUserChapter })(ChapterScreen);
+export default connect(mapStateToProps, { loadChapter })(ChapterScreen);

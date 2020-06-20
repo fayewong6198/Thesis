@@ -142,9 +142,11 @@ exports.getQuestionBanks = asyncHandler(async (req, res, next) => {
 // @route GET questions/user/chapters/:id
 // @access  Private
 exports.getUserChapterQuestionBanks = asyncHandler(async (req, res, next) => {
+  console.log(req.user.id);
+  console.log(req.params.id);
   const questionBanks = await QuestionBank.findOne({
     user: req.user.id,
-    id: req.params.id,
+    _id: req.params.id,
   });
 
   if (!questionBanks)

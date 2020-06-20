@@ -44,8 +44,6 @@ const LoginScreen = ({ login, auth, navigation, logout, LogoutAction }) => {
             value={email}
             name="email"
             onChangeText={(e) => {
-              console.log(e);
-              console.log("email ", email);
               onChange("email")(e);
             }}
           ></TextInput>

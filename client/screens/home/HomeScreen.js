@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, FlatList, TouchableNativeFeedback } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { connect } from "react-redux";
@@ -10,11 +10,8 @@ import AlertComponent from "../../components/AlertComponent";
 
 const HomeScreen = ({
   loadQuestionBank,
-  questionBank,
   auth,
   navigation,
-  logout,
-  loadUser,
 }) => {
   useEffect(() => {
     console.log("Go to Home");
@@ -49,26 +46,7 @@ const HomeScreen = ({
   return (
     <View>
       <AlertComponent></AlertComponent>
-      <Text>{auth.user && auth.user.name}</Text>
-      <Text>{questionBank.questionBanks.length}</Text>
-      {questionBank.questionBanks.length > 0 ? (
-        <FlatList
-          data={questionBank.questionBanks}
-          renderItem={({ item }) => (
-            <TouchableNativeFeedback>
-              <Button
-                title={item.name}
-                onPress={() =>
-                  navigation.navigate("Prepare", { questionBankId: item._id })
-                }
-              ></Button>
-            </TouchableNativeFeedback>
-          )}
-          keyExtractor={item => item._id}
-        />
-      ) : (
-          <Text>No Question Bank found</Text>
-        )}
+
       <View>
         <View style={styles.button}>
           <Button
@@ -102,6 +80,7 @@ const HomeScreen = ({
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
+    questionBank: state.questionBank
   };
 };
 

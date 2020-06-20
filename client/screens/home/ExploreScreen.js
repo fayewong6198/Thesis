@@ -15,8 +15,16 @@ import AlertComponent from "../../components/AlertComponent";
 
 const ExploreScreen = ({ questionBank, loadAllQuestionBanks, navigation }) => {
   useEffect(() => {
-    loadAllQuestionBanks();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+
+      loadAllQuestionBanks();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+
+
+  }, [navigation]);
   return (
     <View>
       <AlertComponent></AlertComponent>
@@ -28,14 +36,15 @@ const ExploreScreen = ({ questionBank, loadAllQuestionBanks, navigation }) => {
               <QuestionBankItem
                 item={item}
                 navigation={navigation}
+                button={true}
               ></QuestionBankItem>
             </View>
           )}
           keyExtractor={(item) => item._id}
         />
       ) : (
-        <Text>No Question Bank found</Text>
-      )}
+          <Text>No Question Bank found</Text>
+        )}
     </View>
   );
 };

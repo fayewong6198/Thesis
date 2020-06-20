@@ -21,7 +21,7 @@ const UserInfoScreen = ({ auth, updateUser, loadUser }) => {
   useEffect(() => {
     loadUser();
     console.log(user);
-    return () => {};
+    return () => { };
   }, []);
 
   const [formData, setFormData] = useState({
@@ -83,15 +83,15 @@ const UserInfoScreen = ({ auth, updateUser, loadUser }) => {
             style={{ width: 200, height: 200 }}
           ></Image>
         ) : (
-          <Image
-            source={{
-              uri: `http://192.168.0.103:5000/uploads/${
-                user.avatar
-              }?time=${new Date()}`,
-            }}
-            style={{ width: 200, height: 200 }}
-          ></Image>
-        )}
+            <Image
+              source={{
+                uri: `http://192.168.0.101:5000/uploads/${
+                  user.avatar
+                  }?time=${new Date()}`,
+              }}
+              style={{ width: 200, height: 200 }}
+            ></Image>
+          )}
         <View style={styles.input}>
           <Text keyboardType="email-address">Email:</Text>
           <TextInput

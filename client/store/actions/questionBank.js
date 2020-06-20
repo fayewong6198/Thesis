@@ -9,10 +9,7 @@ import {
 } from "../type";
 import axios from "axios";
 
-
-
-const IP = "http://192.168.0.101";
-// const IP = "http://192.168.0.103";
+import { IP } from "../../config/config";
 
 const config = {
   headers: {
@@ -75,12 +72,13 @@ export const loadUserChapter = (questionBankId) => async (dispatch) => {
 export const generateQuiz = (chapter, diff) => async (dispatch) => {
   try {
     let body = {};
+    console.log("-----------------------------------------------------");
+    console.log(chapter);
     body.chapters = chapter;
     body.diff = diff;
     body = JSON.stringify(body);
     const res = await axios.post(IP + ":5000/questions/quiz", body, config);
 
-    console.log(res.data);
     dispatch({
       type: GENERATE_QUIZ_SUCCESS,
       payload: res.data,

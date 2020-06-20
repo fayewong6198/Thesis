@@ -9,17 +9,21 @@ import {
   TouchableNativeFeedback,
 } from "react-native";
 
-import AlertComponent from "../components/AlertComponent";
 // Auth Screen
 import LoginScreen from "./auth/LoginScreen";
 import RegisterScreen from "./auth/RegisterScreen";
 // HomeScreen
 import HomeScreen from "./home/HomeScreen";
-import PrepareScreen from "./questionQuiz/PrepareScreen";
 import ExploreScreen from "./home/ExploreScreen";
 import NoteScreen from "./home/NoteScreen";
+import NoteDetailScreen from "./home/NoteDetailScreen";
 // Quiz Screen
 import QuizScreen from "./questionQuiz/QuizScreen";
+import PrepareScreen from "./questionQuiz/PrepareScreen";
+import OptionsScreen from "./questionQuiz/OptionsScreen";
+import SelectChapterScreen from "./questionQuiz/SelectChapterScreen";
+import SelectDifficultyScreen from "./questionQuiz/SelectDifficultyScreen";
+import QuestionCommentScreen from "./questionQuiz/QuestionCommentScreen";
 // User Screen
 import UserInfoScreen from "./user/UserInfoScreen";
 import ManageQuizScreen from "./user/ManageQuizScreen";
@@ -51,6 +55,25 @@ const Home = () => {
         name="ManageChapter"
         component={ManageChapterScreen}
       ></Stack.Screen>
+      <Stack.Screen name="Prepare" component={PrepareScreen}></Stack.Screen>
+      <Stack.Screen name="Quiz" component={QuizScreen}></Stack.Screen>
+      <Stack.Screen name="Options" component={OptionsScreen}></Stack.Screen>
+      <Stack.Screen
+        name="SelectChapter"
+        component={SelectChapterScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="SelectDifficulty"
+        component={SelectDifficultyScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="NoteDetail"
+        component={NoteDetailScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="QuestionComment"
+        component={QuestionCommentScreen}
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -61,6 +84,7 @@ const Explore = () => {
       <Stack.Screen name="Explore" component={ExploreScreen}></Stack.Screen>
       <Stack.Screen name="Prepare" component={PrepareScreen}></Stack.Screen>
       <Stack.Screen name="Quiz" component={QuizScreen}></Stack.Screen>
+      <Stack.Screen name="Options" component={OptionsScreen}></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -69,6 +93,10 @@ const Note = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Note" component={NoteScreen}></Stack.Screen>
+      <Stack.Screen
+        name="NoteDetail"
+        component={NoteDetailScreen}
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 };

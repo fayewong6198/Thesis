@@ -20,6 +20,7 @@ const auth = require("./routes/auth");
 const questions = require("./routes/questions");
 const user = require("./routes/user");
 const comment = require("./routes/comment");
+const note = require("./routes/note");
 
 // Dev loggin middleware
 if (process.env.NODE_ENV === "development") {
@@ -39,7 +40,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/auth", auth);
 app.use("/questions", questions);
 app.use("/user", user);
-app.use("/comment", comment);
+app.use("/comments", comment);
+app.use("/notes", note);
 
 app.use(errorHandler);
 

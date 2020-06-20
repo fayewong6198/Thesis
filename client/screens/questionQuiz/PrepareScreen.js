@@ -6,7 +6,7 @@ import {
   TouchableNativeFeedback,
   Button,
   CheckBox,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import { connect } from "react-redux";
 import { loadChapter, generateQuiz } from "../../store/actions/questionBank";
@@ -17,9 +17,10 @@ const PrepareScreen = ({
   navigation,
   loadChapter,
   chapters,
-  generateQuiz
+  generateQuiz,
 }) => {
   const { questionBankId } = route.params;
+
   const [diff, setDiff] = useState(3);
   const [chapter, setChapter] = useState({});
   const [checked, setChecked] = useState(false);
@@ -35,7 +36,7 @@ const PrepareScreen = ({
     if (diff > 1.2) setDiff(diff - 0.2);
   };
 
-  const setCheckedHandler = id => {
+  const setCheckedHandler = (id) => {
     setChecked(!checked);
     if (chapter[id] == true) {
       chapter[id] = false;
@@ -49,6 +50,7 @@ const PrepareScreen = ({
   };
 
   useEffect(() => {
+    console.log(questionBankId);
     loadChapter(questionBankId);
   }, [questionBankId]);
 
@@ -73,7 +75,7 @@ const PrepareScreen = ({
                 </View>
               </TouchableNativeFeedback>
             )}
-            keyExtractor={item => item._id}
+            keyExtractor={(item) => item._id}
           />
           <View style={styles.buttonContainer}>
             <Text>Diffuculty: </Text>
@@ -93,38 +95,40 @@ const PrepareScreen = ({
       ) : (
         <Text>No chapters found</Text>
       )}
-      <Button title="Logout" onPress={() => {}}></Button>
-      <Button
-        title="Start Quiz"
-        onPress={() => {
-          generateQuiz(chapter, diff);
-          navigation.replace("Quiz", { no: 0, totalTime: 500 });
-        }}
-      ></Button>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Start Quiz"
+          onPress={() => {
+            generateQuiz(chapter, diff);
+            navigation.replace("Quiz", { no: 0, totalTime: 500 });
+          }}
+        ></Button>
+      </View>
     </View>
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    chapters: state.questionBank.chapters
+    chapters: state.questionBank.chapters,
   };
 };
 
 const styles = StyleSheet.create({
   chapter: {
-    flexDirection: "row"
+    flexDirection: "row",
   },
   buttonContainer: {
-    flexDirection: "row",
-    marginHorizontal: 20
+    marginHorizontal: 20,
+    marginVertical: 5,
   },
+
   button: {
-    width: 50
+    width: 50,
   },
   difficulty: {
-    width: 100
-  }
+    width: 100,
+  },
 });
 
 export default connect(mapStateToProps, { loadChapter, generateQuiz })(

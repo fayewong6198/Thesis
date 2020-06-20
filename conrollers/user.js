@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const QuestionBank = require("../models/QuestionBank");
+const mongoose = require("mongoose");
 const path = require("path");
 // @desc  Update User
 // @route put/user
@@ -74,7 +75,48 @@ exports.updateUserCourse = asyncHandler(async (req, res, next) => {
 exports.getUserCourse = asyncHandler(async (req, res, next) => {
   const questionBanks = await QuestionBank.find({
     _id: { $in: req.user.courses },
-  });
+  })
+    .populate("user")
+    .populate("chapters");
 
   return res.status(200).json({ success: true, data: questionBanks });
+});
+
+// @desc  Add course
+// @route POST /user/addCourse/:id
+// @access  Private
+exports.addCourse = asyncHandler(async (req, res, next) => {
+  let user = await User.findById(req.user.id);
+
+  console.log(user);
+  if (user.courses.includes(req.params.id)) {
+    return next(new ErrorResponse("This course is already added"), 500);
+  }
+
+  console.log(req.params.id);
+  user.courses.push(mongoose.Types.ObjectId(req.params.id));
+
+  user = await User.findByIdAndUpdate(req.user.id, { courses: user.courses });
+
+  return res.status(200).json({ success: true, data: user });
+});
+
+// @desc  Remove course
+// @route POST /user/removeCourse/:id
+// @access  Private
+exports.removeCourse = asyncHandler(async (req, res, next) => {
+  let user = await User.findById(req.user.id);
+
+  console.log(user);
+  if (!user.courses.includes(req.params.id)) {
+    return next(new ErrorResponse("This course is already removed"), 500);
+  }
+
+  let courses = user.courses.filter((item) => item != req.params.id);
+
+  console.log(courses);
+
+  user = await User.findByIdAndUpdate(req.user.id, { courses: courses });
+
+  return res.status(200).json({ success: true, data: user });
 });

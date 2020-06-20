@@ -1,23 +1,20 @@
 const mongoose = require("mongoose");
 
-const CommentSchema = new mongoose.Schema(
+const NoteSchema = new mongoose.Schema(
   {
-    text: {
+    key: {
       type: String,
       required: true,
+    },
+    text: {
+      type: String,
+      default: "",
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    questionBank: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "QuestionBank",
-    },
-    question: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Question",
-    },
+
     createdAt: {
       type: Date,
       default: Date.now,
@@ -32,4 +29,12 @@ const CommentSchema = new mongoose.Schema(
     },
   }
 );
-module.exports = mongoose.model("Comment", CommentSchema);
+
+NoteSchema.virtual("votes", {
+  ref: "Vote",
+  localField: "_id",
+  foreignField: "note",
+  justOne: false,
+});
+
+module.exports = mongoose.model("Note", NoteSchema);

@@ -62,6 +62,12 @@ UserSchema.virtual("questionBannks", {
   justOne: false,
 });
 
+UserSchema.virtual("notes", {
+  ref: "Note",
+  localField: "_id",
+  foreignField: "user",
+  justOne: false,
+});
 UserSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
