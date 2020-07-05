@@ -9,12 +9,18 @@ import {
 } from "react-native";
 
 import { connect } from "react-redux";
-import { loadChapter } from "../../store/actions/questionBank";
+import { loadChapter, getUserChapter } from "../../store/actions/questionBank";
 
 import AlertComponent from "../../components/AlertComponent";
 import { COLOR_BLUE } from "../../config/color";
 
-const SelectChapterScreen = ({ chapters, loadChapter, route, navigation }) => {
+const SelectChapterScreen = ({
+  chapters,
+  loadChapter,
+  route,
+  navigation,
+  getUserChapter,
+}) => {
   const { questionBankId } = route.params;
   useEffect(() => {
     console.log(questionBankId);
@@ -30,12 +36,13 @@ const SelectChapterScreen = ({ chapters, loadChapter, route, navigation }) => {
             <View style={styles.items}>
               <TouchableHighlight
                 style={styles.openButton}
-                onPress={() =>
+                onPress={() => {
+                  getUserChapter(questionBankId, item._id);
                   navigation.push("SelectDifficulty", {
                     questionBankId,
                     chapter: item._id,
-                  })
-                }
+                  });
+                }}
               >
                 <Text style={styles.textStyle}>{item.name}</Text>
               </TouchableHighlight>
@@ -71,4 +78,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps, { loadChapter })(SelectChapterScreen);
+export default connect(mapStateToProps, { loadChapter, getUserChapter })(
+  SelectChapterScreen
+);

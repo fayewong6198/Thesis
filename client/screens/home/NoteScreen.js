@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import AlertComponent from "../../components/AlertComponent";
 import { loadUser } from "../../store/actions/auth";
+import { COLOR_BLUE } from "../../config/color";
 
 const NoteScreen = ({ user, navigation, loadUser }) => {
   useEffect(() => {
@@ -24,13 +25,13 @@ const NoteScreen = ({ user, navigation, loadUser }) => {
   return (
     <View>
       <AlertComponent></AlertComponent>
-      <Text> NoteScreen </Text>
+
       <FlatList
         data={user.notes}
         renderItem={({ item }) => (
           <View>
             <TouchableHighlight
-              style={styles.item}
+              style={styles.button}
               onPress={() =>
                 navigation.push("NoteDetail", {
                   key: item.key,
@@ -38,7 +39,7 @@ const NoteScreen = ({ user, navigation, loadUser }) => {
                 })
               }
             >
-              <Text style={styles.text}>{item.key}</Text>
+              <Text style={styles.textStyle}>{item.key}</Text>
             </TouchableHighlight>
           </View>
         )}
@@ -57,18 +58,16 @@ const mapDispatchToProps = {
 };
 
 const styles = StyleSheet.create({
-  item: {
-    backgroundColor: "#9738e0",
-    marginHorizontal: 5,
-    marginVertical: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 2,
-    borderRadius: 10,
-    color: "white",
-    alignContent: "center",
+  button: {
+    margin: 5,
+    backgroundColor: COLOR_BLUE,
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
   },
-  text: {
-    color: "#fff",
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
     textAlign: "center",
   },
 });

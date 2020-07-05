@@ -7,12 +7,15 @@ import {
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
+  TouchableHighlight,
   Alert,
 } from "react-native";
 import { connect } from "react-redux";
 import { login, logout } from "../../store/actions/auth";
 import axios from "axios";
 import AlertComponent from "../../components/AlertComponent";
+import { COLOR_BLUE, COLOR_SECONDARY } from "../../config/color";
+
 const LoginScreen = ({ login, auth, navigation, logout, LogoutAction }) => {
   useEffect(() => {
     logout();
@@ -60,16 +63,21 @@ const LoginScreen = ({ login, auth, navigation, logout, LogoutAction }) => {
           ></TextInput>
         </View>
         <View style={styles.buttonContainer}>
-          <Button
-            title="Login"
+          <TouchableHighlight
+            style={styles.openButton}
             onPress={(e) => {
               onSubmit(encodeURIComponent);
             }}
-          ></Button>
-          <Button
-            title="Go to Register"
+          >
+            <Text style={styles.textStyle}>Login</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={styles.secondaryButton}
             onPress={() => navigation.navigate("Register")}
-          ></Button>
+          >
+            <Text style={styles.textStyle}>Register</Text>
+          </TouchableHighlight>
         </View>
 
         {auth.user && <Text>{auth.user.name}</Text>}
@@ -96,6 +104,25 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
+  },
+  openButton: {
+    backgroundColor: COLOR_BLUE,
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  secondaryButton: {
+    backgroundColor: COLOR_SECONDARY,
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 export default connect(mapStateToProps, { login, logout })(LoginScreen);

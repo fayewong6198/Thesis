@@ -16,12 +16,17 @@ export default function questionComment(state = initialState, action) {
   const { type, payload } = action;
   switch (type) {
     case GET_QUESTION_COMMENT_SUCCESS:
-    case CREATE_COMMENT_SUCCESS:
       return {
         ...state,
         comments: payload.data,
       };
-
+    case CREATE_COMMENT_SUCCESS:
+      console.log("Payload");
+      console.log(payload);
+      return {
+        ...state,
+        comments: [...state.comments, payload.data],
+      };
     case GET_QUESTION_COMMENT_FAILED:
       return {
         ...state,

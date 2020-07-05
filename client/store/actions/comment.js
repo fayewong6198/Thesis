@@ -47,6 +47,8 @@ export const createQuestionComments = (id, formData) => async (dispatch) => {
 
     dispatch(setAlert("Create comment success", "success"));
 
+    console.log(res.data);
+
     dispatch({
       type: CREATE_COMMENT_SUCCESS,
       payload: res.data,

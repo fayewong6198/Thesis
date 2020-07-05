@@ -37,13 +37,6 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "no-avatar.jpg",
     },
-    courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "questionBank",
-      },
-    ],
   },
   {
     toJSON: {
@@ -68,6 +61,14 @@ UserSchema.virtual("notes", {
   foreignField: "user",
   justOne: false,
 });
+
+UserSchema.virtual("courses", {
+  ref: "UserCourse",
+  localField: "_id",
+  foreignField: "user",
+  justOne: false,
+});
+
 UserSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);

@@ -3,9 +3,12 @@ const asyncHandler = require("../middlewares/async");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const UserCourse = require("../models/UserCourse");
+const UserChapter = require("../models/UserChapter");
 const QuestionBank = require("../models/QuestionBank");
 const mongoose = require("mongoose");
 const path = require("path");
+const Chapter = require("../models/Chapter");
 // @desc  Update User
 // @route put/user
 // @access  Private
@@ -73,8 +76,13 @@ exports.updateUserCourse = asyncHandler(async (req, res, next) => {
 // @route GET /user/courses
 // @access  Private
 exports.getUserCourse = asyncHandler(async (req, res, next) => {
+  console.log(req.user.courses);
+  let ids = [];
+  for (let i = 0; i < req.user.courses.length; i++) {
+    ids.push(req.user.courses[i].questionBank);
+  }
   const questionBanks = await QuestionBank.find({
-    _id: { $in: req.user.courses },
+    _id: { $in: ids },
   })
     .populate("user")
     .populate("chapters");
@@ -86,18 +94,41 @@ exports.getUserCourse = asyncHandler(async (req, res, next) => {
 // @route POST /user/addCourse/:id
 // @access  Private
 exports.addCourse = asyncHandler(async (req, res, next) => {
+  const questionBank = await QuestionBank.findById(req.params.id);
+  console.log(1);
+  if (!questionBank) {
+    return next(new ErrorResponse("Question Bank not found", 400));
+  }
   let user = await User.findById(req.user.id);
 
-  console.log(user);
-  if (user.courses.includes(req.params.id)) {
-    return next(new ErrorResponse("This course is already added"), 500);
+  let course = await UserCourse.findOne({
+    user: req.user._id,
+    questionBank: questionBank,
+  });
+  console.log(2);
+  // Check dupplicate
+  if (course) {
+    return next(new ErrorResponse("Course is already added"));
   }
+  console.log(3);
+  course = await UserCourse.create({
+    user: req.user._id,
+    questionBank: questionBank,
+  });
 
-  console.log(req.params.id);
-  user.courses.push(mongoose.Types.ObjectId(req.params.id));
+  // Create UserChapter
+  console.log(4);
+  chapters = await Chapter.find({ questionBank: questionBank });
+  chapters = JSON.parse(JSON.stringify(chapters));
 
-  user = await User.findByIdAndUpdate(req.user.id, { courses: user.courses });
-
+  for (let i = 0; i < chapters.length; i++) {
+    await UserChapter.create({
+      chapter: chapters[i]._id,
+      userCourse: course._id,
+    });
+  }
+  console.log(5);
+  user = await User.findById(req.user.id);
   return res.status(200).json({ success: true, data: user });
 });
 
@@ -105,18 +136,19 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
 // @route POST /user/removeCourse/:id
 // @access  Private
 exports.removeCourse = asyncHandler(async (req, res, next) => {
-  let user = await User.findById(req.user.id);
+  let userCourse = await UserCourse.findOne({
+    user: req.user._id,
+    questionBank: req.params.id,
+  });
 
-  console.log(user);
-  if (!user.courses.includes(req.params.id)) {
-    return next(new ErrorResponse("This course is already removed"), 500);
+  if (!userCourse) {
+    return next(new ErrorResponse("This course is already removed", 400));
   }
 
-  let courses = user.courses.filter((item) => item != req.params.id);
+  // delete chapter
+  await UserChapter.deleteMany({ userCourse: userCourse });
 
-  console.log(courses);
+  await userCourse.remove();
 
-  user = await User.findByIdAndUpdate(req.user.id, { courses: courses });
-
-  return res.status(200).json({ success: true, data: user });
+  return res.status(200).json({ success: true, data: {} });
 });

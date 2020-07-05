@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import AlertComponent from "../../components/AlertComponent";
 import axios from "axios";
 //action
-import { clearQuiz } from "../../store/actions/questionBank";
+import { clearQuiz, submitQuiz } from "../../store/actions/questionBank";
 import { createNote, getNote, clearNote, vote } from "../../store/actions/note";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
@@ -26,7 +26,7 @@ import {
   COLOR_BLUE_DARK,
 } from "../../config/color";
 
-const QuizScreen = ({
+const LearnScreen = ({
   navigation,
   quiz,
   route,
@@ -37,6 +37,8 @@ const QuizScreen = ({
   clearNote,
   user,
   vote,
+  userChapter,
+  submitQuiz,
 }) => {
   const [numOfQuestion, setNumOfQuestion] = useState(0);
   const [answer, setAnswer] = useState({});
@@ -114,31 +116,98 @@ const QuizScreen = ({
     setAnswer(answer);
   };
 
+  const E = (user_elo, diff) => {
+    return 1 / Math.pow(10, -(user_elo - diff) * 6);
+  };
   const submitHandler = () => {
     console.log(answer);
     let score = 0;
-    for (let key in answer) {
-      for (let item in answer[key]) {
-        console.log(
-          key,
-          " ",
-          item.charAt(0),
-          " ",
-          quiz[key].rightAnswer,
-          " ",
-          answer[key][item]
-        );
+    let total_score = 0;
+    let correct_num = 0;
+    let wrong_num = 0;
+    if (userChapter.elo != null) {
+      for (let key in answer) {
+        for (let item in answer[key]) {
+          console.log(
+            key,
+            " ",
+            item.charAt(0),
+            " ",
+            quiz[key].rightAnswer,
+            " ",
+            answer[key][item]
+          );
 
-        if (
-          item.charAt(0) == quiz[key].rightAnswer &&
-          answer[key][item] == true
-        )
-          score += quiz[key].diff;
+          if (
+            item.charAt(0) == quiz[key].rightAnswer &&
+            answer[key][item] == true
+          ) {
+            score += quiz[key].difficulty;
+            correct_num += 1;
+          } else {
+            wrong_num += 1;
+          }
+
+          total_score += quiz[key].difficulty;
+        }
       }
+      console.log(userChapter.elo);
+
+      setScore(score);
+      setSubmited(true);
+
+      let r_oop = total_score / (quiz.length + 1);
+      let r_post = r_oop + (correct_num - wrong_num) / (quiz.length + 1);
+      let body = {};
+      body.questionBank = quiz[0].questionBank;
+      body.chapter = quiz[0].chapter;
+      body.elo = r_post;
+      submitQuiz(body);
+    } else {
+      let r_pre = userChapter.elo;
+      let S = 0;
+      let Sexp = 0;
+      for (let key in answer) {
+        for (let item in answer[key]) {
+          if (
+            item.charAt(0) == quiz[key].rightAnswer &&
+            answer[key][item] == true
+          ) {
+            S += 1 - E(r_pre, quiz[key].difficulty);
+            correct_num += 1;
+          } else {
+            S += E(r_pre, quiz[key].difficulty);
+            wrong_num += 1;
+          }
+
+          if (userChapter.elo >= quiz[key].difficulty) {
+            Sexp += 1 - E(r_pre, quiz[key].difficulty);
+          } else {
+            Sexp += E(r_pre, quiz[key].difficulty);
+          }
+
+          total_score += quiz[key].difficulty;
+        }
+      }
+      let body = {};
+      body.questionBank = quiz[0].questionBank;
+      body.chapter = quiz[0].chapter;
+      body.elo = r_pre + (S - Sexp);
+      submitQuiz(body);
     }
+
+    console.log(userChapter.elo);
 
     setScore(score);
     setSubmited(true);
+
+    let r_oop = total_score / (quiz.length + 1);
+    let r_post = r_oop + (correct_num - wrong_num) / (quiz.length + 1);
+    let body = {};
+    body.questionBank = quiz[0].questionBank;
+    body.chapter = quiz[0].chapter;
+    body.elo = r_post;
+    submitQuiz(body);
   };
 
   const showText = (text) => {
@@ -359,7 +428,7 @@ const QuizScreen = ({
                         onChange={() => answerHandler(numOfQuestion, item)}
                       ></CheckBox>
 
-                      {submited && (
+                      {true && (
                         <CheckBox
                           value={
                             numTochar(
@@ -431,6 +500,7 @@ const mapStateToProps = (state) => ({
   user: state.auth.user,
   quiz: state.questionBank.quiz,
   note: state.note.notes,
+  userChapter: state.questionBank.userChapter,
 });
 
 const styles = StyleSheet.create({
@@ -558,4 +628,5 @@ export default connect(mapStateToProps, {
   getNote,
   clearNote,
   vote,
-})(QuizScreen);
+  submitQuiz,
+})(LearnScreen);

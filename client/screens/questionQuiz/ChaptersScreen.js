@@ -20,6 +20,7 @@ const ChapterScreen = ({ chapters, loadChapter, route }) => {
           renderItem={({ item }) => (
             <View style={styles.items}>
               <Button title={item.name}></Button>
+              ahihi
             </View>
           )}
           keyExtractor={(item) => item._id}

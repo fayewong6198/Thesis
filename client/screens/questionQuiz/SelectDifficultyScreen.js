@@ -1,48 +1,69 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  TouchableHighlight,
+} from "react-native";
 
 import { connect } from "react-redux";
-import { loadChapter, generateQuiz } from "../../store/actions/questionBank";
+import {
+  loadChapter,
+  generateQuiz,
+  getQuesionWhileDoingQuiz,
+} from "../../store/actions/questionBank";
 
 import AlertComponent from "../../components/AlertComponent";
+import { COLOR_BLUE, COLOR_PRIMARY, COLOR_SECONDARY } from "../../config/color";
 
 const SelectDifficultyScreen = ({
   route,
   navigation,
   generateQuiz,
   loadChapter,
+  getQuesionWhileDoingQuiz,
 }) => {
-  const chapter = route.params.chapter;
+  const { chapter, questionBankId } = route.params;
 
   return (
     <View>
       <AlertComponent></AlertComponent>
       <View style={styles.buttonContainer}>
-        <Button
-          title="Easy"
+        <TouchableHighlight
+          style={[styles.button, { backgroundColor: COLOR_BLUE }]}
           onPress={() => {
+            // getQuesionWhileDoingQuiz(chapter);
             generateQuiz({ [chapter]: true }, 1.5);
-            navigation.replace("Quiz", { no: 0, totalTime: 500 });
+            navigation.replace("Learn", { no: 0, totalTime: 500 });
           }}
-        ></Button>
+        >
+          <Text style={styles.textStyle}>Easy</Text>
+        </TouchableHighlight>
       </View>
       <View style={styles.buttonContainer}>
-        <Button
-          title="Medium"
+        <TouchableHighlight
+          style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
           onPress={() => {
-            generateQuiz({ [chapter]: true }, 2.5);
-            navigation.replace("Quiz", { no: 0, totalTime: 500 });
+            // getQuesionWhileDoingQuiz(chapter);
+            generateQuiz({ [chapter]: true }, questionBankId, 2.5, 100, true);
+            navigation.replace("Learn", { no: 0, totalTime: 500 });
           }}
-        ></Button>
+        >
+          <Text style={styles.textStyle}>Medium</Text>
+        </TouchableHighlight>
       </View>
       <View style={styles.buttonContainer}>
-        <Button
-          title="Hard"
+        <TouchableHighlight
+          style={[styles.button, { backgroundColor: COLOR_SECONDARY }]}
           onPress={() => {
+            // getQuesionWhileDoingQuiz(chapter);
             generateQuiz({ [chapter]: true }, 3.5);
-            navigation.replace("Quiz", { no: 0, totalTime: 500 });
+            navigation.replace("Learn", { no: 0, totalTime: 500 });
           }}
-        ></Button>
+        >
+          <Text style={styles.textStyle}>Hard</Text>
+        </TouchableHighlight>
       </View>
     </View>
   );
@@ -57,8 +78,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 5,
   },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
 
-export default connect(mapStateToProps, { loadChapter, generateQuiz })(
-  SelectDifficultyScreen
-);
+export default connect(mapStateToProps, {
+  loadChapter,
+  generateQuiz,
+  getQuesionWhileDoingQuiz,
+})(SelectDifficultyScreen);

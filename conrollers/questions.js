@@ -4,15 +4,28 @@ const Question = require("../models/Question");
 const QuestionBank = require("../models/QuestionBank");
 const User = require("../models/User");
 const Chapter = require("../models/Chapter");
+const userCourse = require("../models/UserCourse");
+const userChapter = require("../models/UserChapter");
+const mongoose = require("mongoose");
+const UserCourse = require("../models/UserCourse");
+const UserChapter = require("../models/UserChapter");
 // Algorithm
 const N = 500;
-const TIME = 500;
+let TIME = 500;
 const MAX_SIZE = TIME * 20;
 const QUESTION_PER_TEST = TIME / 20;
 let DIFFICULTY = 2.4;
 const TIME_WEIGHT = 0.2;
 const DIFFICULTY_WEIGHT = 0.8;
 const THRESS_HOLD = 0.95;
+
+const leftLineProba = (userDiff, standardDiff) => {
+  return (1 / standardDiff) * userDiff;
+};
+
+const rightLineProba = (userDiff, standardDiff) => {
+  return (-1 / (4 - standardDiff)) * (userDiff - standardDiff) + standardDiff;
+};
 
 /**
  * Randomize array element order in-place.
@@ -133,6 +146,7 @@ exports.getAllQuestionBanks = asyncHandler(async (req, res, next) => {
 // @route GET questions/user
 // @access  Private
 exports.getQuestionBanks = asyncHandler(async (req, res, next) => {
+  console.log(req.user.id);
   const questionBanks = await QuestionBank.find({ user: req.user.id });
 
   return res.status(200).json({ success: true, data: questionBanks });
@@ -158,6 +172,111 @@ exports.getUserChapterQuestionBanks = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ success: true, data: chapters });
 });
 
+// @desc  Get Question of QuestionBank by Chapter
+// @route GET questions/:questionBankId/chapter/:chapterId
+// @access  Private
+exports.getUserQuestions = asyncHandler(async (req, res, next) => {
+  console.log(req.user.id);
+  const questionBanks = await QuestionBank.findOne({
+    user: req.user.id,
+    _id: req.params.questionBankId,
+  });
+
+  console.log(questionBanks.user);
+  if (!questionBanks) {
+    return next(new ErrorResponse("Question not found", 404));
+  }
+
+  // if (
+  //   questionBanks.user != mongoose.Types.ObjectId(req.user.id) ||
+  //   req.user.role != "admin"
+  // ) {
+  //   console.log(questionBanks.user);
+  //   return next(new ErrorResponse("UnAuthorized", 400));
+  // }
+
+  const questions = await Question.find({
+    chapter: req.params.chapterId,
+  });
+
+  return res.status(200).json({ success: true, data: questions });
+});
+
+// @desc  Get Question of QuestionBank by Chapter
+// @route GET questions/:id/user
+// @access  Private
+exports.getUserQuestion = asyncHandler(async (req, res, next) => {
+  console.log(req.user.id);
+  const question = await Question.findOne({
+    _id: req.params.id,
+  });
+
+  if (!question) {
+    return next(new ErrorResponse("Question not found", 404));
+  }
+
+  if (question.user != req.user.id || req.user.role != "admin") {
+    return next(new ErrorResponse("UnAuthorized", 400));
+  }
+
+  return res.status(200).json({ success: true, data: question });
+});
+
+// @desc  Update question
+// @route UPDATE questions/:id/user
+// @access  Private
+exports.updateUserQuestion = asyncHandler(async (req, res, next) => {
+  console.log(req.user.id);
+  let question = await Question.findById(req.params.id);
+
+  if (!question) {
+    return next(new ErrorResponse("Question not found", 404));
+  }
+
+  if (question.user != req.user.id || req.user.role != "admin") {
+    return next(new ErrorResponse("UnAuthorized", 400));
+  }
+
+  question = await Question.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+
+  return res.status(200).json({ success: true, data: question });
+});
+
+// @desc  Delete question
+// @route DELETE questions/:id/user
+// @access  Private
+exports.deleteUserQuestion = asyncHandler(async (req, res, next) => {
+  console.log(req.user.id);
+  let question = await Question.findById(req.params.id);
+
+  if (!question) {
+    return next(new ErrorResponse("Question not found", 404));
+  }
+
+  if (question.user != req.user.id || req.user.role != "admin") {
+    return next(new ErrorResponse("UnAuthorized", 400));
+  }
+
+  question = await Question.findByIdAndDelete(req.params.id);
+
+  return res.status(200).json({ success: true, data: question });
+});
+
+// @desc  Create question
+// @route POST questions/
+// @access  Private
+exports.createUserQuestion = asyncHandler(async (req, res, next) => {
+  const question = new Question(req.body);
+
+  question.user = req.user.id;
+
+  await question.save();
+
+  return res.status(200).json({ success: true, data: question });
+});
+
 // @desc  Get Chapter QuestionBank
 // @route GET questions/:id
 // @access  Private
@@ -172,14 +291,58 @@ exports.getChapters = asyncHandler(async (req, res, next) => {
 // @route POST questionBank/quiz
 // @access  Private
 exports.generateQuiz = asyncHandler(async (req, res, next) => {
+  console.log("cccccccccccccccccc");
   let chapters = [];
+
+  DIFFICULTY = req.body.diff;
+
+  TIME = req.body.time || 500;
   for (let key in req.body.chapters)
     if (
       req.body.chapters.hasOwnProperty(key) &&
       req.body.chapters[key] === true
     )
       chapters.push(key);
-  DIFFICULTY = req.body.diff;
+  if (true) {
+    chapter = chapters[0];
+
+    let userCourse = await UserCourse.findOne({
+      user: req.user.id,
+      questionBank: req.body.questionBank,
+    });
+
+    if (!userCourse) {
+      console.log(req.body);
+      return next(new ErrorResponse("User course not found", 400));
+    }
+
+    let userChapter = await UserChapter.findOne({
+      userCourse: userCourse,
+      chapter: chapter,
+    });
+
+    console.log(userChapter);
+    if (userChapter.elo == null) {
+      console.log("userChapter.elo  is null");
+      DIFFICULTY = 2.5;
+    } else {
+      console.log("userChapter.elo  is not null");
+
+      // console.log(userChapter);
+      DIFFICULTY = userChapter.elo;
+      console.log(userChapter.elo);
+      console.log(DIFFICULTY);
+      if (DIFFICULTY < 1.5) {
+        DIFFICULTY = 1.5;
+      }
+      if (DIFFICULTY > 3.5) {
+        DIFFICULTY = 3.5;
+      }
+    }
+
+    TIME = 100;
+  }
+
   let questions = await Question.find({ chapter: { $in: chapters } }).populate({
     path: "chapter",
     select: "name",
@@ -292,4 +455,73 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
     data: population[maxFitnessIndex],
     total: population[maxFitnessIndex].length,
   });
+});
+
+// @desc  Get single Question while doing quiz
+// @route POST questionBank/:chapterId/quiz
+// @access  Private
+
+exports.getQuestionsWhileDoingQuiz = asyncHandler(async (req, res, next) => {
+  const chapter = await Chapter.findById(req.params.chapterId);
+
+  if (!chapter) {
+    return next(new ErrorResponse("Chapter Not Found", 404));
+  }
+
+  const questions = await Question.find({ chapter: chapter._id });
+
+  if (questions.length == 0) {
+    return next(new ErrorResponse("Chapter has no question"));
+  }
+
+  const { diff } = req.body;
+
+  let index = Math.floor(Math.random() * questions.length);
+
+  let probability = Math.random();
+
+  while (probability < diff) {
+    index = Math.floor(Math.random() * questions.length);
+    probability = Math.random();
+  }
+
+  return res.status(200).json({ success: true, data: questions[index] });
+});
+
+// @desc  Submit quiz
+// @route POST questionBank/submit
+// @access  Private
+exports.submitQuiz = asyncHandler(async (req, res, next) => {
+  const userCourse = await UserCourse.findOne({
+    user: req.user.id,
+    questionBank: req.body.questionBank,
+  });
+  const userChapter = await UserChapter.findOne({
+    userCourse: userCourse,
+    chapter: req.body.chapter,
+  });
+  if (!userChapter) {
+    return next(new ErrorResponse("USER CHAPTER NOT FOUND", 400));
+  }
+  userChapter.elo = req.body.elo;
+
+  await userChapter.save();
+
+  return res.status(200).json({ success: true });
+});
+
+// @desc  Get UserChapter
+// @route POST questionBank/userChapter
+// @access  Private
+exports.getUserChapter = asyncHandler(async (req, res, next) => {
+  const userCourse = await UserCourse.findOne({
+    user: req.user.id,
+    questionBank: req.body.questionBank,
+  });
+  const userChapter = await UserChapter.findOne({
+    userCourse: userCourse,
+    chapter: req.body.chapter,
+  });
+
+  return res.status(200).json({ success: true, data: userChapter });
 });

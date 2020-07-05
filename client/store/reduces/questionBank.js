@@ -7,14 +7,21 @@ import {
   GENERATE_QUIZ_SUCCESS,
   GENERATE_QUIZ_FAILED,
   CLEAR_QUIZ,
+  GET_QUESTIONS_SUCCESS,
+  GET_QUESTION_SUCCESS,
+  GET_USER_CHAPTER_SUCCESS,
+  GET_USER_CHAPTER_FAILED,
 } from "../type";
 
 const initialState = {
   loading: false,
   questionBanks: [],
   chapters: [],
+  questions: [],
+  question: null,
   quiz: [],
   quizTime: false,
+  userChapter: null,
 };
 
 export default function questionBanks(state = initialState, action) {
@@ -37,6 +44,36 @@ export default function questionBanks(state = initialState, action) {
         ...state,
         quizTime: true,
         quiz: payload.data,
+      };
+    case GET_QUESTIONS_SUCCESS:
+      return {
+        ...state,
+        questions: payload.data,
+      };
+    case GET_QUESTION_SUCCESS:
+      return {
+        ...state,
+        question: payload.data,
+      };
+    case GET_QUESTION_BANK_FAILED:
+      return {
+        ...state,
+        loading: true,
+        question: [],
+      };
+    case GET_USER_CHAPTER_SUCCESS:
+      console.log(" USERchAPTER " + payload.data);
+      console.log(" USERchAPTER " + payload);
+      return {
+        ...state,
+        loading: false,
+
+        userChapter: payload.data,
+      };
+    case GET_USER_CHAPTER_FAILED:
+      return {
+        ...state,
+        userChapter: null,
       };
     case CLEAR_QUIZ:
     case GENERATE_QUIZ_FAILED:

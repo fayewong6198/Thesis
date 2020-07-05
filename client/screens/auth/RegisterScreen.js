@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Button,
+  TouchableHighlight,
   TouchableWithoutFeedback,
   StyleSheet,
   TextInput,
@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { register } from "../../store/actions/auth";
-import axios from "axios";
 import AlertComponent from "../../components/AlertComponent";
+import { COLOR_PRIMARY, COLOR_SECONDARY } from "../../config/color";
 
 const RegisterScreen = ({ register, auth, navigation }) => {
   const [formData, setFormData] = useState({
@@ -79,16 +79,21 @@ const RegisterScreen = ({ register, auth, navigation }) => {
           ></TextInput>
         </View>
         <View style={styles.buttonContainer}>
-          <Button
-            title="Register"
+          <TouchableHighlight
+            style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
             onPress={(e) => {
               onSubmit();
             }}
-          ></Button>
-          <Button
-            title="Go to Login"
+          >
+            <Text style={styles.textStyle}>Register</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={[styles.button, { backgroundColor: COLOR_SECONDARY }]}
             onPress={() => navigation.navigate("Login")}
-          ></Button>
+          >
+            <Text style={styles.textStyle}>Back to login</Text>
+          </TouchableHighlight>
         </View>
         <Text>{auth.data}</Text>
       </View>
@@ -114,6 +119,17 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 export default connect(mapStateToProps, { register })(RegisterScreen);

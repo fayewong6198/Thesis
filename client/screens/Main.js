@@ -19,6 +19,7 @@ import NoteScreen from "./home/NoteScreen";
 import NoteDetailScreen from "./home/NoteDetailScreen";
 // Quiz Screen
 import QuizScreen from "./questionQuiz/QuizScreen";
+import LearningScreen from "./questionQuiz/LearningScreen";
 import PrepareScreen from "./questionQuiz/PrepareScreen";
 import OptionsScreen from "./questionQuiz/OptionsScreen";
 import SelectChapterScreen from "./questionQuiz/SelectChapterScreen";
@@ -30,6 +31,9 @@ import ManageQuizScreen from "./user/ManageQuizScreen";
 import ManageCourseScreen from "./user/ManageCourseScreen";
 import ManageChapterScreen from "./user/ManageChapterScreen";
 
+// Manage Question Screen
+import QuestionListScreen from "./home/QuestionListScreen";
+import QuestionScreen from "./home/QuestionScreen";
 // Navigator
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
@@ -57,6 +61,7 @@ const Home = () => {
       ></Stack.Screen>
       <Stack.Screen name="Prepare" component={PrepareScreen}></Stack.Screen>
       <Stack.Screen name="Quiz" component={QuizScreen}></Stack.Screen>
+      <Stack.Screen name="Learn" component={LearningScreen}></Stack.Screen>
       <Stack.Screen name="Options" component={OptionsScreen}></Stack.Screen>
       <Stack.Screen
         name="SelectChapter"
@@ -74,6 +79,11 @@ const Home = () => {
         name="QuestionComment"
         component={QuestionCommentScreen}
       ></Stack.Screen>
+      <Stack.Screen
+        name="QuestionsList"
+        component={QuestionListScreen}
+      ></Stack.Screen>
+      <Stack.Screen name="Question" component={QuestionScreen}></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -85,6 +95,7 @@ const Explore = () => {
       <Stack.Screen name="Prepare" component={PrepareScreen}></Stack.Screen>
       <Stack.Screen name="Quiz" component={QuizScreen}></Stack.Screen>
       <Stack.Screen name="Options" component={OptionsScreen}></Stack.Screen>
+      <Stack.Screen name="Learn" component={LearningScreen}></Stack.Screen>
     </Stack.Navigator>
   );
 };

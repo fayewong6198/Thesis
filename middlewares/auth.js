@@ -22,7 +22,8 @@ exports.protected = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, "secret");
 
     // set req.user
-    req.user = await User.findById(decoded.id).populate("notes");
+    req.user = await User.findById(decoded.id).populate("courses notes");
+    // .populate("courses");
 
     next();
   } catch (error) {

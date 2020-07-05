@@ -9,19 +9,22 @@ import {
   Keyboard,
   Image,
   Platform,
+  TouchableHighlight,
 } from "react-native";
 
 import { connect } from "react-redux";
 import { updateUser, loadUser } from "../../store/actions/auth";
 import * as ImagePicker from "expo-image-picker";
 import AlertComponent from "../../components/AlertComponent";
+import { IP } from "../../config/config";
+import { COLOR_BLUE, COLOR_PRIMARY } from "../../config/color";
 
 const UserInfoScreen = ({ auth, updateUser, loadUser }) => {
   const user = auth.user;
   useEffect(() => {
     loadUser();
     console.log(user);
-    return () => { };
+    return () => {};
   }, []);
 
   const [formData, setFormData] = useState({
@@ -78,20 +81,22 @@ const UserInfoScreen = ({ auth, updateUser, loadUser }) => {
       <View style={styles.container}>
         <AlertComponent></AlertComponent>
         {image ? (
-          <Image
-            source={{ uri: image.image.uri }}
-            style={{ width: 200, height: 200 }}
-          ></Image>
+          <View style={styles.image}>
+            <Image
+              source={{ uri: image.image.uri }}
+              style={{ width: 200, height: 200, borderRadius: 100 }}
+            ></Image>
+          </View>
         ) : (
+          <View style={styles.image}>
             <Image
               source={{
-                uri: `http://192.168.0.101:5000/uploads/${
-                  user.avatar
-                  }?time=${new Date()}`,
+                uri: `${IP}:5000/uploads/${user.avatar}?time=${new Date()}`,
               }}
-              style={{ width: 200, height: 200 }}
+              style={{ width: 200, height: 200, borderRadius: 100 }}
             ></Image>
-          )}
+          </View>
+        )}
         <View style={styles.input}>
           <Text keyboardType="email-address">Email:</Text>
           <TextInput
@@ -114,13 +119,21 @@ const UserInfoScreen = ({ auth, updateUser, loadUser }) => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <Button title="Change Avatar" onPress={() => pickImage()}></Button>
-          <Button
-            title="Apply"
+          <TouchableHighlight
+            style={styles.openButton}
             onPress={(e) => {
               onSubmit();
             }}
-          ></Button>
+          >
+            <Text style={styles.textStyle}>Apply</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={styles.secondaryButton}
+            onPress={() => pickImage()}
+          >
+            <Text style={styles.textStyle}>Change avatar</Text>
+          </TouchableHighlight>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -141,8 +154,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
+    marginTop: 10,
     flexDirection: "row",
     justifyContent: "space-around",
+  },
+  image: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  openButton: {
+    backgroundColor: COLOR_BLUE,
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  secondaryButton: {
+    backgroundColor: COLOR_PRIMARY,
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

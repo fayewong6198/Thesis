@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const errorHandler = require("./middlewares/error");
 const path = require("path");
 const fileupload = require("express-fileupload");
+const UserCourse = require("./models/UserCourse");
 
 const app = express();
 // LOad env vars

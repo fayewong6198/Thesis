@@ -1,12 +1,19 @@
 import React, { useEffect } from "react";
-import { View, Text, Button, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableHighlight,
+  StyleSheet,
+  FlatList,
+} from "react-native";
 
 import { connect } from "react-redux";
 import { loadUserChapter } from "../../store/actions/questionBank";
 
 import AlertComponent from "../../components/AlertComponent";
+import { COLOR_BLUE } from "../../config/color";
 
-const ChapterScreen = ({ chapters, loadUserChapter, route }) => {
+const ChapterScreen = ({ chapters, loadUserChapter, route, navigation }) => {
   const { QuestionBankId } = route.params;
   useEffect(() => {
     console.log(QuestionBankId);
@@ -20,7 +27,17 @@ const ChapterScreen = ({ chapters, loadUserChapter, route }) => {
           data={chapters}
           renderItem={({ item }) => (
             <View style={styles.items}>
-              <Button title={item.name}></Button>
+              <TouchableHighlight
+                style={styles.button}
+                onPress={() =>
+                  navigation.push("QuestionsList", {
+                    id: item._id,
+                    questionBankId: QuestionBankId,
+                  })
+                }
+              >
+                <Text style={styles.textStyle}>{item.name}</Text>
+              </TouchableHighlight>
             </View>
           )}
           keyExtractor={(item) => item._id}
@@ -39,6 +56,17 @@ const mapStateToProps = (state) => ({
 const styles = StyleSheet.create({
   items: {
     margin: 10,
+  },
+  button: {
+    backgroundColor: COLOR_BLUE,
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

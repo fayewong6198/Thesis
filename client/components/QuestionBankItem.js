@@ -21,17 +21,34 @@ const QuestionBankItem = ({
   loadUser,
 }) => {
   const [toggleCourse, setToggleCourse] = useState(false);
+  const [userCourses, setUserCourses] = useState([]);
   useEffect(() => {
     console.log(item._id);
     loadUser();
     return () => {};
   }, [toggleCourse]);
+
+  useEffect(() => {
+    if (user && user.courses) {
+      let courses = [];
+      for (let i = 0; i < user.courses.length; i++) {
+        console.log(i);
+        console.log(user.courses[i]);
+        courses.push(user.courses[i].questionBank);
+        setUserCourses((c) => [...c, "cc"]);
+        console.log(courses);
+      }
+
+      console.log("------------------------------------------------");
+      setUserCourses(courses);
+    }
+  }, user);
+
+  useEffect(() => {
+    console.log(userCourses);
+  }, [userCourses]);
   return (
-    <TouchableNativeFeedback
-      onPress={() => {
-        navigation.push("Options", { questionBankId: item._id });
-      }}
-    >
+    <TouchableNativeFeedback>
       <View style={styles.item}>
         <View style={{ flex: 1 }}>
           <Text>Author: {item.user.name}</Text>
@@ -42,13 +59,12 @@ const QuestionBankItem = ({
         </View>
         <View style={styles.buttonFlex}>
           <Button
-            title="Add Course"
+            title="Start"
             style={styles.button}
             color={COLOR_PRIMARY}
-            disabled={user.courses.includes(item._id) ? false : true}
+            disabled={userCourses.includes(item._id) ? false : true}
             onPress={() => {
-              removeCourse(item._id);
-              setToggleCourse(!toggleCourse);
+              navigation.push("Options", { questionBankId: item._id });
             }}
           />
           {button === true ? (
@@ -57,7 +73,7 @@ const QuestionBankItem = ({
                 title="Add to course"
                 style={styles.button}
                 color={COLOR_SECONDARY}
-                disabled={user.courses.includes(item._id) ? true : false}
+                disabled={userCourses.includes(item._id) ? true : false}
                 onPress={() => {
                   addCourse(item._id), setToggleCourse(!toggleCourse);
                 }}
@@ -69,7 +85,7 @@ const QuestionBankItem = ({
                 title="Remove Course"
                 style={styles.button}
                 color="#A33838"
-                disabled={user.courses.includes(item._id) ? false : true}
+                disabled={userCourses.includes(item._id) ? false : true}
                 onPress={() => {
                   removeCourse(item._id);
                   setToggleCourse(!toggleCourse);

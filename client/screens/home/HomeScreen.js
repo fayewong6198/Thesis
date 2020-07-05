@@ -1,5 +1,13 @@
 import React, { useEffect } from "react";
-import { View, Text, Button, StyleSheet, FlatList, TouchableNativeFeedback } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  FlatList,
+  TouchableNativeFeedback,
+  TouchableHighlight,
+} from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { connect } from "react-redux";
@@ -7,12 +15,9 @@ import axios from "axios";
 import { loadQuestionBank } from "../../store/actions/questionBank";
 import { logout, loadUser } from "../../store/actions/auth";
 import AlertComponent from "../../components/AlertComponent";
+import { COLOR_BLUE } from "../../config/color";
 
-const HomeScreen = ({
-  loadQuestionBank,
-  auth,
-  navigation,
-}) => {
+const HomeScreen = ({ loadQuestionBank, auth, navigation }) => {
   useEffect(() => {
     console.log("Go to Home");
     if (auth.isAuthenticated) loadQuestionBank();
@@ -49,28 +54,36 @@ const HomeScreen = ({
 
       <View>
         <View style={styles.button}>
-          <Button
-            title="Change Info"
+          <TouchableHighlight
+            style={styles.openButton}
             onPress={() => navigation.push("UserInfo")}
-          ></Button>
+          >
+            <Text style={styles.textStyle}>Change Info</Text>
+          </TouchableHighlight>
         </View>
         <View style={styles.button}>
-          <Button
-            title="Manage Your Quiz"
+          <TouchableHighlight
+            style={styles.openButton}
             onPress={() => navigation.push("ManageQuiz")}
-          ></Button>
+          >
+            <Text style={styles.textStyle}>Manage Your Quiz</Text>
+          </TouchableHighlight>
         </View>
         <View style={styles.button}>
-          <Button
-            title="Your Course"
+          <TouchableHighlight
+            style={styles.openButton}
             onPress={() => navigation.push("ManageCourse")}
-          ></Button>
+          >
+            <Text style={styles.textStyle}>Your Course</Text>
+          </TouchableHighlight>
         </View>
         <View style={styles.button}>
-          <Button
-            title="Add Question Bank"
+          <TouchableHighlight
+            style={styles.openButton}
             onPress={() => getDocument()}
-          ></Button>
+          >
+            <Text style={styles.textStyle}>Add Question Bank</Text>
+          </TouchableHighlight>
         </View>
       </View>
     </View>
@@ -80,7 +93,7 @@ const HomeScreen = ({
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-    questionBank: state.questionBank
+    questionBank: state.questionBank,
   };
 };
 
@@ -88,6 +101,17 @@ const styles = StyleSheet.create({
   button: {
     marginVertical: 10,
     marginHorizontal: 20,
+  },
+  openButton: {
+    backgroundColor: COLOR_BLUE,
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 export default connect(mapStateToProps, { loadQuestionBank, logout, loadUser })(

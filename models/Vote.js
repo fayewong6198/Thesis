@@ -7,6 +7,10 @@ const VoteSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "note",
     },
+    comment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "comment",
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",

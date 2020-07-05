@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, Button, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import { connect } from "react-redux";
 import { TextInput } from "react-native-gesture-handler";
+import { COLOR_SECONDARY, COLOR_PRIMARY } from "../../config/color";
+
 const OptionsScreen = ({ route, navigation }) => {
   const { questionBankId } = route.params;
 
@@ -12,20 +14,24 @@ const OptionsScreen = ({ route, navigation }) => {
   return (
     <View>
       <View style={styles.buttonContainer}>
-        <Button
-          title="Doing quiz"
+        <TouchableHighlight
+          style={styles.openButton}
           onPress={() =>
             navigation.push("SelectChapter", { questionBankId: questionBankId })
           }
-        ></Button>
+        >
+          <Text style={styles.textStyle}>Doing Quiz</Text>
+        </TouchableHighlight>
       </View>
       <View style={styles.buttonContainer}>
-        <Button
-          title="Exam test"
+        <TouchableHighlight
+          style={styles.secondaryButton}
           onPress={() =>
             navigation.push("Prepare", { questionBankId: questionBankId })
           }
-        ></Button>
+        >
+          <Text style={styles.textStyle}>Exam test</Text>
+        </TouchableHighlight>
       </View>
     </View>
   );
@@ -44,6 +50,25 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 50,
+  },
+  openButton: {
+    backgroundColor: COLOR_PRIMARY,
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  secondaryButton: {
+    backgroundColor: COLOR_SECONDARY,
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

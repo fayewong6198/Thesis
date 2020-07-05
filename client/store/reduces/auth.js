@@ -14,13 +14,15 @@ import {
   ADD_COURSE_SUCCESS,
   ADD_COURSE_FAILED,
   REMOVE_COURSE_FAILED,
-  REMOVE_COURSE_SUCCESS
+  REMOVE_COURSE_SUCCESS,
 } from "../type";
 
 const initialState = {
   isAuthenticated: false,
   loading: false,
   user: null,
+  userCourses: null,
+  userChapters: null,
 };
 
 import setAuthToken from "../../ultis/setAuthToken";
@@ -57,10 +59,16 @@ export default function auth(state = initialState, action) {
         user: payload.data,
       };
 
+    // case ADD_COURSE_SUCCESS:
+    //   return {
+    //     ...state,
+    //     userCourses: payload.data,
+    // };
+
     case ADD_COURSE_FAILED:
       return {
-        ...state
-      }
+        ...state,
+      };
     case REGISTER_FAILED:
     case LOGIN_FAILED:
     case LOG_OUT:

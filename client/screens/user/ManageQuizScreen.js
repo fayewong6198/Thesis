@@ -1,10 +1,17 @@
 import React, { useEffect } from "react";
-import { View, Text, Button, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableHighlight,
+} from "react-native";
 
 import { connect } from "react-redux";
 import { loadQuestionBank } from "../../store/actions/questionBank";
 
 import AlertComponent from "../../components/AlertComponent";
+import { COLOR_BLUE } from "../../config/color";
 
 const ManageQuizScreen = ({ questionBank, loadQuestionBank, navigation }) => {
   useEffect(() => {
@@ -20,14 +27,16 @@ const ManageQuizScreen = ({ questionBank, loadQuestionBank, navigation }) => {
           data={questionBank.questionBanks}
           renderItem={({ item }) => (
             <View style={styles.items}>
-              <Button
-                title={item.name}
+              <TouchableHighlight
+                style={styles.openButton}
                 onPress={() =>
                   navigation.navigate("ManageChapter", {
                     QuestionBankId: item._id,
                   })
                 }
-              ></Button>
+              >
+                <Text style={styles.textStyle}>{item.name}</Text>
+              </TouchableHighlight>
             </View>
           )}
           keyExtractor={(item) => item._id}
@@ -46,6 +55,17 @@ const mapStateToProps = (state) => ({
 const styles = StyleSheet.create({
   items: {
     margin: 10,
+  },
+  openButton: {
+    backgroundColor: COLOR_BLUE,
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

@@ -17,6 +17,13 @@ import {
   clearNote,
 } from "../../store/actions/note";
 import AlertComponent from "../../components/AlertComponent";
+import {
+  COLOR_BLUE,
+  COLOR_PRIMARY,
+  COLOR_SECONDARY,
+  COLOR_BLUE_DARK,
+} from "../../config/color";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const NoteDetailScreen = ({
   user,
@@ -51,17 +58,31 @@ const NoteDetailScreen = ({
   return (
     <View>
       <AlertComponent></AlertComponent>
-      <Text> NoteDetailScreen</Text>
-      <Text>{key}</Text>
-      {/* <Text>cc</Text> */}
-      {note && <Text>{note.text}</Text>}
-      <Button
-        style={styles.button}
-        title="edit"
-        onPress={() => {
-          setModalVisible(true);
-        }}
-      ></Button>
+
+      <View style={styles.noteInfo}>
+        <Text style={styles.keyword}>{key}</Text>
+        {/* <Text>cc</Text> */}
+        {note && <Text style={styles.note}>{note.text}</Text>}
+      </View>
+
+      <View style={styles.mainBtnContainer}>
+        <TouchableHighlight
+          style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          <Text style={styles.textStyle}>Edit</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={[styles.button, { backgroundColor: COLOR_SECONDARY }]}
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          <Text style={styles.textStyle}>Delete</Text>
+        </TouchableHighlight>
+      </View>
 
       <Modal
         animationType="slide"
@@ -73,6 +94,16 @@ const NoteDetailScreen = ({
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+              <MaterialIcons
+                name="close"
+                size={24}
+                color="black"
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}
+              />
+            </View>
             <Text style={styles.modalText}>{key}</Text>
             {note && (
               <TextInput
@@ -84,21 +115,14 @@ const NoteDetailScreen = ({
               ></TextInput>
             )}
 
-            <Button
+            <TouchableHighlight
+              style={[styles.button, { backgroundColor: COLOR_BLUE }]}
               onPress={(e) => {
                 onSubmit(e);
                 setModalVisible(!modalVisible);
               }}
-              title="Update"
-            ></Button>
-
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
             >
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              <Text style={styles.textStyle}>Update</Text>
             </TouchableHighlight>
           </View>
         </View>
@@ -133,11 +157,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
   },
-  button: {
-    marginVertical: 5,
-    marginHorizontal: 10,
-    borderRadius: 10,
-  },
+
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -159,10 +179,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  openButton: {
-    backgroundColor: "#F194FF",
+  button: {
     borderRadius: 20,
     padding: 10,
+    paddingHorizontal: 30,
     elevation: 2,
   },
   textStyle: {
@@ -173,13 +193,36 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 20,
+    color: COLOR_BLUE,
   },
   textInput: {
     borderStyle: "solid",
     borderRadius: 5,
+    borderColor: "#eee",
     borderWidth: 1,
     width: 200,
     marginBottom: 10,
+  },
+  mainBtnContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+  noteInfo: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  keyword: {
+    fontWeight: "bold",
+    fontSize: 30,
+    color: COLOR_BLUE,
+  },
+  note: {
+    fontSize: 20,
+    color: COLOR_BLUE_DARK,
+    padding: 10,
   },
 });
 
