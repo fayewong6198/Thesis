@@ -13,7 +13,13 @@ const AlertComponent = ({ alerts }) =>
         alert.alertType === "success" ? styles.alertSuccess : styles.alertFailed
       }
     >
-      <Text style={styles.text}>{alert.msg}</Text>
+      <Text
+        style={
+          alert.alertType === "success" ? styles.textSuccess : styles.textFailed
+        }
+      >
+        {alert.msg}
+      </Text>
     </View>
   ));
 
@@ -25,18 +31,26 @@ const styles = StyleSheet.create({
   alertSuccess: {
     padding: 10,
     fontSize: 20,
-    backgroundColor: "green",
-    color: "white",
+    backgroundColor: "#d4edda",
+    borderStyle: "solid",
+    borderColor: "#c3e6cb",
+    borderWidth: 1,
+    borderRadius: 5,
   },
   alertFailed: {
     padding: 10,
     fontSize: 20,
-    backgroundColor: "red",
-    color: "white",
+    backgroundColor: "#f8d7da",
+    borderStyle: "solid",
+    borderColor: "#f5c6cb",
+    borderWidth: 1,
+    borderRadius: 5,
   },
-  text: {
-    color: "white",
+  textSuccess: {
+    color: "#155724",
   },
+
+  textFailed: { color: "#721c24" },
 });
 
 export default connect(mapStateToProps, {})(AlertComponent);

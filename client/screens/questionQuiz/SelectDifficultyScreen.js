@@ -12,6 +12,7 @@ import {
   loadChapter,
   generateQuiz,
   getQuesionWhileDoingQuiz,
+  getUserChapter,
 } from "../../store/actions/questionBank";
 
 import AlertComponent from "../../components/AlertComponent";
@@ -23,54 +24,64 @@ const SelectDifficultyScreen = ({
   generateQuiz,
   loadChapter,
   getQuesionWhileDoingQuiz,
+  userChapter,
+  getUserChapter,
 }) => {
   const { chapter, questionBankId } = route.params;
 
+  useEffect(() => {
+    getUserChapter(questionBankId, chapter);
+  }, []);
   return (
     <View>
       <AlertComponent></AlertComponent>
-      <View style={styles.buttonContainer}>
-        <TouchableHighlight
-          style={[styles.button, { backgroundColor: COLOR_BLUE }]}
-          onPress={() => {
-            // getQuesionWhileDoingQuiz(chapter);
-            generateQuiz({ [chapter]: true }, 1.5);
-            navigation.replace("Learn", { no: 0, totalTime: 500 });
-          }}
-        >
-          <Text style={styles.textStyle}>Easy</Text>
-        </TouchableHighlight>
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableHighlight
-          style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
-          onPress={() => {
-            // getQuesionWhileDoingQuiz(chapter);
-            generateQuiz({ [chapter]: true }, questionBankId, 2.5, 100, true);
-            navigation.replace("Learn", { no: 0, totalTime: 500 });
-          }}
-        >
-          <Text style={styles.textStyle}>Medium</Text>
-        </TouchableHighlight>
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableHighlight
-          style={[styles.button, { backgroundColor: COLOR_SECONDARY }]}
-          onPress={() => {
-            // getQuesionWhileDoingQuiz(chapter);
-            generateQuiz({ [chapter]: true }, 3.5);
-            navigation.replace("Learn", { no: 0, totalTime: 500 });
-          }}
-        >
-          <Text style={styles.textStyle}>Hard</Text>
-        </TouchableHighlight>
-      </View>
+      {userChapter != null && userChapter.elo == null ? (
+        <View style={styles.buttonContainer}>
+          <Text>{userChapter.elo}</Text>
+          <TouchableHighlight
+            style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
+            onPress={() => {
+              // getQuesionWhileDoingQuiz(chapter);
+              generateQuiz({ [chapter]: true }, questionBankId, 2.5, 100, true);
+              navigation.replace("Learn", {
+                no: 0,
+                totalTime: 500,
+                questionBankId,
+                chapter,
+              });
+            }}
+          >
+            <Text style={styles.textStyle}>Do a brief test</Text>
+          </TouchableHighlight>
+        </View>
+      ) : (
+        <View style={styles.buttonContainer}>
+          <TouchableHighlight
+            style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
+            onPress={() => {
+              // getQuesionWhileDoingQuiz(chapter);
+              generateQuiz({ [chapter]: true }, questionBankId, 2.5, 100, true);
+              navigation.replace("Learn", {
+                no: 0,
+                totalTime: 500,
+                questionBankId,
+                chapter,
+              });
+            }}
+          >
+            <Text style={styles.textStyle}>
+              {userChapter && userChapter.elo} / 4
+            </Text>
+          </TouchableHighlight>
+        </View>
+      )}
     </View>
   );
 };
 
 const mapStateToProps = (state) => ({
   chapters: state.questionBank.chapters,
+  userChapter: state.questionBank.userChapter,
 });
 
 const styles = StyleSheet.create({
@@ -96,4 +107,5 @@ export default connect(mapStateToProps, {
   loadChapter,
   generateQuiz,
   getQuesionWhileDoingQuiz,
+  getUserChapter,
 })(SelectDifficultyScreen);

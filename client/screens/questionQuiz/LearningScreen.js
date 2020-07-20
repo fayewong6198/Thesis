@@ -16,7 +16,12 @@ import { connect } from "react-redux";
 import AlertComponent from "../../components/AlertComponent";
 import axios from "axios";
 //action
-import { clearQuiz, submitQuiz } from "../../store/actions/questionBank";
+import {
+  clearQuiz,
+  submitQuiz,
+  getUserChapter,
+  generateQuiz,
+} from "../../store/actions/questionBank";
 import { createNote, getNote, clearNote, vote } from "../../store/actions/note";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
@@ -25,6 +30,7 @@ import {
   COLOR_BLUE,
   COLOR_BLUE_DARK,
 } from "../../config/color";
+import { setAlert } from "../../store/actions/alert";
 
 const LearnScreen = ({
   navigation,
@@ -39,6 +45,8 @@ const LearnScreen = ({
   vote,
   userChapter,
   submitQuiz,
+  getUserChapter,
+  generateQuiz,
 }) => {
   const [numOfQuestion, setNumOfQuestion] = useState(0);
   const [answer, setAnswer] = useState({});
@@ -53,10 +61,14 @@ const LearnScreen = ({
   const [realTexts, setRealTexts] = useState(null);
   const [term, setTerm] = useState(null);
   const [noteNumber, setNoteNumber] = useState(0);
+  const [maxScore, setMaxScore] = useState(0);
+  const [start, setStart] = useState(false);
+  const { questionBankId, chapter } = route.params;
 
   let timeout = useRef(null);
   useEffect(() => {
     setTime(route.params.totalTime);
+    getUserChapter(questionBankId, chapter);
 
     timeout.current = setInterval(() => {
       setTime((time) => time - 1);
@@ -66,7 +78,7 @@ const LearnScreen = ({
       clearInterval(timeout.current);
       clearQuiz();
     };
-  }, []);
+  }, [start]);
 
   useEffect(() => {
     let textss = {};
@@ -99,6 +111,7 @@ const LearnScreen = ({
     setRealTexts(textss);
     setTexts(textViews);
   }, [quiz]);
+
   const answerHandler = (no, ans) => {
     // Bug
     setChecked(!checked);
@@ -117,27 +130,21 @@ const LearnScreen = ({
   };
 
   const E = (user_elo, diff) => {
-    return 1 / Math.pow(10, -(user_elo - diff) * 6);
+    return 1 / (1 + Math.pow(10, -(user_elo - diff) / 4));
   };
   const submitHandler = () => {
-    console.log(answer);
     let score = 0;
     let total_score = 0;
     let correct_num = 0;
     let wrong_num = 0;
-    if (userChapter.elo != null) {
+    let max_score = 0;
+    if (userChapter.elo == null) {
+      console.log("userChapter is null");
       for (let key in answer) {
         for (let item in answer[key]) {
-          console.log(
-            key,
-            " ",
-            item.charAt(0),
-            " ",
-            quiz[key].rightAnswer,
-            " ",
-            answer[key][item]
-          );
-
+          if (answer[key][item] == true) {
+            max_score += quiz[key].difficulty;
+          }
           if (
             item.charAt(0) == quiz[key].rightAnswer &&
             answer[key][item] == true
@@ -151,8 +158,7 @@ const LearnScreen = ({
           total_score += quiz[key].difficulty;
         }
       }
-      console.log(userChapter.elo);
-
+      setMaxScore(max_score);
       setScore(score);
       setSubmited(true);
 
@@ -164,50 +170,50 @@ const LearnScreen = ({
       body.elo = r_post;
       submitQuiz(body);
     } else {
+      console.log(1);
       let r_pre = userChapter.elo;
       let S = 0;
       let Sexp = 0;
       for (let key in answer) {
+        console.log(2);
         for (let item in answer[key]) {
+          console.log(3);
+          if (answer[key][item] == true) {
+            if (quiz[key] && quiz[key].difficulty) {
+              max_score += quiz[key].difficulty;
+            } else {
+              max_score += 2.5;
+            }
+          }
           if (
             item.charAt(0) == quiz[key].rightAnswer &&
             answer[key][item] == true
           ) {
-            S += 1 - E(r_pre, quiz[key].difficulty);
             correct_num += 1;
+            score += quiz[key].difficulty;
           } else {
-            S += E(r_pre, quiz[key].difficulty);
             wrong_num += 1;
           }
-
-          if (userChapter.elo >= quiz[key].difficulty) {
-            Sexp += 1 - E(r_pre, quiz[key].difficulty);
-          } else {
-            Sexp += E(r_pre, quiz[key].difficulty);
-          }
+          Sexp += E(r_pre, quiz[key].difficulty);
 
           total_score += quiz[key].difficulty;
         }
       }
+      console.log(4);
       let body = {};
       body.questionBank = quiz[0].questionBank;
       body.chapter = quiz[0].chapter;
-      body.elo = r_pre + (S - Sexp);
+      console.log("Score expected");
+      console.log(S);
+      console.log(Sexp);
+      body.elo = r_pre + (correct_num - Sexp) / (quiz.length + 1);
+      setScore(score);
+
+      setMaxScore(max_score);
+      setSubmited(true);
+
       submitQuiz(body);
     }
-
-    console.log(userChapter.elo);
-
-    setScore(score);
-    setSubmited(true);
-
-    let r_oop = total_score / (quiz.length + 1);
-    let r_post = r_oop + (correct_num - wrong_num) / (quiz.length + 1);
-    let body = {};
-    body.questionBank = quiz[0].questionBank;
-    body.chapter = quiz[0].chapter;
-    body.elo = r_post;
-    submitQuiz(body);
   };
 
   const showText = (text) => {
@@ -376,10 +382,10 @@ const LearnScreen = ({
       <View style={styles.time}>
         {time >= 0 ? (
           <Text>
-            You have{" "}
+            You have
             <Text style={{ color: COLOR_SECONDARY, fontWeight: "bold" }}>
               {time}s
-            </Text>{" "}
+            </Text>
             left
           </Text>
         ) : (
@@ -389,16 +395,14 @@ const LearnScreen = ({
       {quiz && quiz.length > 0 ? (
         <View style={styles.info}>
           <Text>
-            Question number {numOfQuestion + 1}/{quiz.length - 1}
+            Question number {numOfQuestion + 1}/{quiz.length}
           </Text>
           <Text>Chapter {quiz[numOfQuestion].chapter.name}</Text>
           <Text>Difficulty {quiz[numOfQuestion].difficulty}</Text>
-          <Text></Text>
 
           <View style={styles.textContainer}>
             {quiz.length > 0 && texts[numOfQuestion]}
           </View>
-
           <View style={styles.mainContent}>
             <TouchableHighlight
               onPress={() => {
@@ -457,18 +461,54 @@ const LearnScreen = ({
               <MaterialIcons name="navigate-next" size={24} color="black" />
             </TouchableHighlight>
           </View>
-
           <View style={styles.buttonContainer}>
-            <TouchableHighlight
-              style={styles.openButton}
-              onPress={() => {
-                clearInterval(timeout.current);
-                setSubmited(true);
-                submitHandler();
-              }}
-            >
-              <Text style={styles.textStyle}>Submit</Text>
-            </TouchableHighlight>
+            {submited == false ? (
+              <TouchableHighlight
+                style={styles.openButton}
+                onPress={() => {
+                  clearInterval(timeout.current);
+                  setSubmited(true);
+                  submitHandler();
+                }}
+              >
+                <Text style={styles.textStyle}>Submit</Text>
+              </TouchableHighlight>
+            ) : (
+              <View style={styles.buttonContainer2}>
+                <View style={styles.buttonContainer}>
+                  <TouchableHighlight
+                    style={styles.openButton}
+                    onPress={() => {
+                      getUserChapter(questionBankId, chapter);
+                      setAnswer({});
+                      setSubmited(false);
+                      setNumOfQuestion(0);
+                      setStart(!start);
+                      generateQuiz(
+                        { [chapter]: true },
+                        questionBankId,
+                        2.5,
+                        100,
+                        true
+                      );
+                      setTime(route.params.totalTime);
+                    }}
+                  >
+                    <Text style={styles.textStyle}>Do the test again</Text>
+                  </TouchableHighlight>
+                </View>
+                <View style={styles.buttonContainer}>
+                  <TouchableHighlight
+                    style={styles.openButton}
+                    onPress={() => {
+                      navigation.goBack();
+                    }}
+                  >
+                    <Text style={styles.textStyle}>Go back</Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+            )}
           </View>
         </View>
       ) : (
@@ -487,9 +527,11 @@ const LearnScreen = ({
           >
             <Text style={styles.seeAnswer}>See answer</Text>
           </TouchableHighlight>
-
+          <Text>Your elo now is {userChapter.elo}</Text>
           <Text>Your Score is </Text>
-          <Text style={styles.score}>{score}</Text>
+          <Text style={styles.score}>
+            {score} / {maxScore}
+          </Text>
         </View>
       )}
     </View>
@@ -620,6 +662,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
+  buttonContainer2: {
+    padding: 5,
+  },
 });
 
 export default connect(mapStateToProps, {
@@ -629,4 +674,6 @@ export default connect(mapStateToProps, {
   clearNote,
   vote,
   submitQuiz,
+  generateQuiz,
+  getUserChapter,
 })(LearnScreen);

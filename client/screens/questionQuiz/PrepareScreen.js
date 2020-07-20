@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { loadChapter, generateQuiz } from "../../store/actions/questionBank";
+import { MaterialIcons } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import MultiSelect from "react-native-multiple-select";
 import {
@@ -32,6 +33,7 @@ const PrepareScreen = ({
   const [diff, setDiff] = useState(3);
   const [chapter, setChapter] = useState({});
   const [checked, setChecked] = useState(false);
+  const [time, setTime] = useState(500);
 
   const incressingDiff = () => {
     console.log("incressing");
@@ -67,44 +69,80 @@ const PrepareScreen = ({
       {chapters && chapters.length > 0 ? (
         <View>
           <FlatList
+            contentContainerStyle={{
+              marginLeft: 20,
+            }}
             data={chapters}
             renderItem={({ item }) => (
-              <TouchableNativeFeedback>
+              <TouchableNativeFeedback
+                onPress={() => setCheckedHandler(item._id)}
+              >
                 <View style={styles.chapter}>
-                  <Text>{item.name}</Text>
                   <CheckBox
                     onChange={() => setCheckedHandler(item._id)}
                     value={chapter[item._id]}
                     id={item._id}
                     name={item._id}
                   ></CheckBox>
+                  <Text>{item.name}</Text>
                 </View>
               </TouchableNativeFeedback>
             )}
             keyExtractor={(item) => item._id}
           />
           <View style={styles.diffContainer}>
-            <Text>Diffuculty: </Text>
-
-            <TouchableHighlight
-              style={styles.button}
-              onPress={() => decressingDiff()}
-            >
-              <Text style={styles.textStyle}>-</Text>
-            </TouchableHighlight>
-
-            <TextInput
-              style={styles.difficulty}
-              editable={false}
-              value={diff.toFixed(2).toString()}
-            ></TextInput>
-
-            <TouchableHighlight
-              style={styles.button}
-              onPress={() => incressingDiff()}
-            >
-              <Text style={styles.textStyle}>+</Text>
-            </TouchableHighlight>
+            <View style={{ flex: 1 }}>
+              <Text>Diffuculty: </Text>
+            </View>
+            <View style={{ flex: 1, flexDirection: "row", padding: 10 }}>
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <MaterialIcons
+                  name="remove"
+                  size={32}
+                  color="black"
+                  onPress={() => decressingDiff()}
+                />
+              </View>
+              <View style={{ flex: 2, alignItems: "center" }}>
+                <Text style={{ textAlign: "center" }}>
+                  {diff.toFixed(2).toString()}
+                </Text>
+              </View>
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <MaterialIcons
+                  name="add"
+                  size={32}
+                  color="black"
+                  onPress={() => incressingDiff()}
+                />
+              </View>
+            </View>
+          </View>
+          <View style={styles.diffContainer}>
+            <View style={{ flex: 1 }}>
+              <Text>Time: </Text>
+            </View>
+            <View style={{ flex: 1, flexDirection: "row", padding: 10 }}>
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <MaterialIcons
+                  name="remove"
+                  size={32}
+                  color="black"
+                  onPress={() => setTime(time - 50)}
+                />
+              </View>
+              <View style={{ flex: 2, alignItems: "center" }}>
+                <Text style={{ textAlign: "center" }}>{time}</Text>
+              </View>
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <MaterialIcons
+                  name="add"
+                  size={32}
+                  color="black"
+                  onPress={() => setTime(time + 50)}
+                />
+              </View>
+            </View>
           </View>
         </View>
       ) : (
@@ -114,7 +152,8 @@ const PrepareScreen = ({
         <TouchableHighlight
           style={styles.openButton}
           onPress={() => {
-            generateQuiz(chapter, diff);
+            generateQuiz(chapter, questionBankId, diff, time, false);
+
             navigation.replace("Quiz", { no: 0, totalTime: 500 });
           }}
         >
@@ -134,6 +173,8 @@ const mapStateToProps = (state) => {
 const styles = StyleSheet.create({
   chapter: {
     flexDirection: "row",
+    alignItems: "center",
+    padding: 5,
   },
   buttonContainer: {
     marginHorizontal: 20,
@@ -144,6 +185,8 @@ const styles = StyleSheet.create({
   diffContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
+    alignItems: "center",
+    padding: 10,
   },
 
   button: {

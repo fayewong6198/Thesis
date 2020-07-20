@@ -186,12 +186,20 @@ export const submitQuiz = (formData) => async (dispatch) => {
   try {
     const body = JSON.stringify(formData);
 
-    const rest = await axios.post(IP + `:5000/questions/submit`, body, config);
+    const res = await axios.post(IP + `:5000/questions/submit`, body, config);
 
     dispatch(setAlert("Submit success", "success"));
+
+    dispatch({
+      type: GET_USER_CHAPTER_SUCCESS,
+      payload: res.data,
+    });
   } catch (error) {
     dispatch(setAlert("Submit error", "danger"));
-
+    dispatch({
+      type: GET_USER_CHAPTER_FAILED,
+      payload: res.data,
+    });
     console.log("Error");
   }
 };

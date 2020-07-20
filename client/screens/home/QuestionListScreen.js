@@ -12,6 +12,7 @@ import { connect } from "react-redux";
 
 import QuestionBankItem from "../../components/QuestionBankItem";
 import AlertComponent from "../../components/AlertComponent";
+import { COLOR_PRIMARY } from "../../config/color";
 
 const QuestionListScreen = ({
   questions,
@@ -43,7 +44,7 @@ const QuestionListScreen = ({
                   navigation.push("Question", { id: item._id });
                 }}
               >
-                <Text>{item.text}</Text>
+                <Text style={styles.text}>{item.text}</Text>
               </TouchableNativeFeedback>
             </View>
           )}
@@ -62,10 +63,15 @@ const mapStateToProps = (state) => ({
 
 const styles = StyleSheet.create({
   items: {
-    margin: 10,
+    margin: 15,
     padding: 10,
     borderRadius: 2,
-    color: "#333",
+    borderLeftColor: COLOR_PRIMARY,
+    borderLeftWidth: 2,
+    backgroundColor: "#fefefe",
+  },
+  text: {
+    color: "#0c5460",
   },
 });
 export default connect(mapStateToProps, { loadQuestionInChapter })(

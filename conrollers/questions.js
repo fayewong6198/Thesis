@@ -17,7 +17,7 @@ const QUESTION_PER_TEST = TIME / 20;
 let DIFFICULTY = 2.4;
 const TIME_WEIGHT = 0.2;
 const DIFFICULTY_WEIGHT = 0.8;
-const THRESS_HOLD = 0.95;
+const THRESS_HOLD = 0.9;
 
 const leftLineProba = (userDiff, standardDiff) => {
   return (1 / standardDiff) * userDiff;
@@ -291,7 +291,6 @@ exports.getChapters = asyncHandler(async (req, res, next) => {
 // @route POST questionBank/quiz
 // @access  Private
 exports.generateQuiz = asyncHandler(async (req, res, next) => {
-  console.log("cccccccccccccccccc");
   let chapters = [];
 
   DIFFICULTY = req.body.diff;
@@ -303,7 +302,7 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
       req.body.chapters[key] === true
     )
       chapters.push(key);
-  if (true) {
+  if (req.body.quiz == true) {
     chapter = chapters[0];
 
     let userCourse = await UserCourse.findOne({
@@ -343,6 +342,7 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
     TIME = 100;
   }
 
+  console.log("DIFFFFFFFFF ", DIFFICULTY);
   let questions = await Question.find({ chapter: { $in: chapters } }).populate({
     path: "chapter",
     select: "name",
@@ -507,7 +507,7 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
 
   await userChapter.save();
 
-  return res.status(200).json({ success: true });
+  return res.status(200).json({ success: true, data: userChapter });
 });
 
 // @desc  Get UserChapter
