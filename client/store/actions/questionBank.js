@@ -207,7 +207,6 @@ export const submitQuiz = (formData) => async (dispatch) => {
 export const getUserChapter = (questionBankId, chapterId) => async (
   dispatch
 ) => {
-  dispatch(setAlert("Go to Get user courses success", "success"));
   try {
     let body = {};
     body.questionBank = questionBankId;
@@ -220,7 +219,6 @@ export const getUserChapter = (questionBankId, chapterId) => async (
       config
     );
 
-    dispatch(setAlert("Get user courses success", "success"));
     dispatch({
       type: GET_USER_CHAPTER_SUCCESS,
       payload: res.data,

@@ -30,14 +30,14 @@ const PrepareScreen = ({
 }) => {
   const { questionBankId } = route.params;
 
-  const [diff, setDiff] = useState(3);
+  const [diff, setDiff] = useState(5);
   const [chapter, setChapter] = useState({});
   const [checked, setChecked] = useState(false);
   const [time, setTime] = useState(500);
 
   const incressingDiff = () => {
     console.log("incressing");
-    if (diff < 4.8) setDiff(diff + 0.2);
+    if (diff < 9) setDiff(diff + 0.5);
     console.log(diff);
   };
 
@@ -154,7 +154,7 @@ const PrepareScreen = ({
           onPress={() => {
             generateQuiz(chapter, questionBankId, diff, time, false);
 
-            navigation.replace("Quiz", { no: 0, totalTime: 500 });
+            navigation.replace("Quiz", { no: 0, totalTime: time });
           }}
         >
           <Text style={styles.textStyle}>Start Quiz</Text>

@@ -130,7 +130,7 @@ const LearnScreen = ({
   };
 
   const E = (user_elo, diff) => {
-    return 1 / (1 + Math.pow(10, -(user_elo - diff) / 4));
+    return 1 / (1 + Math.pow(10, -(user_elo - diff) / 10));
   };
   const submitHandler = () => {
     let score = 0;
@@ -170,19 +170,17 @@ const LearnScreen = ({
       body.elo = r_post;
       submitQuiz(body);
     } else {
-      console.log(1);
       let r_pre = userChapter.elo;
       let S = 0;
       let Sexp = 0;
       for (let key in answer) {
-        console.log(2);
         for (let item in answer[key]) {
           console.log(3);
           if (answer[key][item] == true) {
             if (quiz[key] && quiz[key].difficulty) {
               max_score += quiz[key].difficulty;
             } else {
-              max_score += 2.5;
+              max_score += 5;
             }
           }
           if (
@@ -432,7 +430,7 @@ const LearnScreen = ({
                         onChange={() => answerHandler(numOfQuestion, item)}
                       ></CheckBox>
 
-                      {true && (
+                      {submited && (
                         <CheckBox
                           value={
                             numTochar(

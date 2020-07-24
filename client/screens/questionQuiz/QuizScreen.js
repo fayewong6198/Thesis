@@ -43,6 +43,7 @@ const QuizScreen = ({
   const [checked, setChecked] = useState(false);
   const [submited, setSubmited] = useState(false);
   const [score, setScore] = useState(0);
+  const [totalScore, setTotalScore] = useState(0);
   const [time, setTime] = useState(20);
   const [timeSetted, setTimeSetted] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -117,6 +118,7 @@ const QuizScreen = ({
   const submitHandler = () => {
     console.log(answer);
     let score = 0;
+    let ttScore = 0;
     for (let key in answer) {
       for (let item in answer[key]) {
         console.log(
@@ -132,12 +134,19 @@ const QuizScreen = ({
         if (
           item.charAt(0) == quiz[key].rightAnswer &&
           answer[key][item] == true
-        )
-          score += quiz[key].diff;
+        ) {
+          console.log("cc");
+
+          score += quiz[key].difficulty;
+          console.log(quiz[key].difficulty);
+          console.log(score);
+        }
+        ttScore += quiz[key].difficulty;
       }
     }
 
     setScore(score);
+    setTotalScore(ttScore);
     setSubmited(true);
   };
 
@@ -320,7 +329,7 @@ const QuizScreen = ({
       {quiz && quiz.length > 0 ? (
         <View style={styles.info}>
           <Text>
-            Question number {numOfQuestion + 1}/{quiz.length - 1}
+            Question number {numOfQuestion + 1}/{quiz.length}
           </Text>
           <Text>Chapter {quiz[numOfQuestion].chapter.name}</Text>
           <Text>Difficulty {quiz[numOfQuestion].difficulty}</Text>
@@ -420,7 +429,9 @@ const QuizScreen = ({
           </TouchableHighlight>
 
           <Text>Your Score is </Text>
-          <Text style={styles.score}>{score}</Text>
+          <Text style={styles.score}>
+            {score} / {totalScore}
+          </Text>
         </View>
       )}
     </View>

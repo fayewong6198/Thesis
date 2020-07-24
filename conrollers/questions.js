@@ -17,7 +17,7 @@ const QUESTION_PER_TEST = TIME / 20;
 let DIFFICULTY = 2.4;
 const TIME_WEIGHT = 0.2;
 const DIFFICULTY_WEIGHT = 0.8;
-const THRESS_HOLD = 0.9;
+const THRESS_HOLD = 0.85;
 
 const leftLineProba = (userDiff, standardDiff) => {
   return (1 / standardDiff) * userDiff;
@@ -119,13 +119,14 @@ exports.createQuestionBank = asyncHandler(async (req, res, next) => {
       text: question.text,
       answer: question.answer,
       rightAnswer: question.rightAnswer,
-      difficulty: question.difficulty,
+      difficulty: Math.floor(Math.random() * 10) + 1,
       time: question.time,
       chapter: chapter._id,
       knowledge: question.knowledge,
       questionBank: questionBank,
     });
   });
+  console.log("create question bank success full");
   res.status(200).json({ success: true });
 });
 
@@ -323,7 +324,7 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
     console.log(userChapter);
     if (userChapter.elo == null) {
       console.log("userChapter.elo  is null");
-      DIFFICULTY = 2.5;
+      DIFFICULTY = 5;
     } else {
       console.log("userChapter.elo  is not null");
 
@@ -331,11 +332,11 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
       DIFFICULTY = userChapter.elo;
       console.log(userChapter.elo);
       console.log(DIFFICULTY);
-      if (DIFFICULTY < 1.5) {
-        DIFFICULTY = 1.5;
+      if (DIFFICULTY < 3) {
+        DIFFICULTY = 2;
       }
-      if (DIFFICULTY > 3.5) {
-        DIFFICULTY = 3.5;
+      if (DIFFICULTY > 8) {
+        DIFFICULTY = 8;
       }
     }
 
@@ -349,16 +350,16 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
   });
 
   JSON.parse(JSON.stringify(questions));
-  if (DIFFICULTY >= 3.5) {
-    questions = questions.filter((question) => question.difficulty >= 3);
+  if (DIFFICULTY >= 8) {
+    questions = questions.filter((question) => question.difficulty >= 8);
   }
-  if (DIFFICULTY >= 4) {
-    questions = questions.filter((question) => question.difficulty == "4");
+  if (DIFFICULTY <= 4) {
+    questions = questions.filter((question) => question.difficulty <= 4);
   }
 
   let population = [];
   let test = [];
-  console.log(2);
+
   for (let i = 0; i < MAX_SIZE; i++) {
     if ((i + 1) % QUESTION_PER_TEST != 0) {
       test.push(questions[i % questions.length]);
@@ -441,15 +442,13 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
 
     console.log(averageFitness / population.length + " " + maxFitness);
   }
-  console.log("average diff: " + average(population[maxFitnessIndex]));
-  console.log(total(population[maxFitnessIndex]));
-  console.log(population[maxFitnessIndex].length);
-  // console.log(questions.filter(s => s.difficulty == "4").length);
-  // console.log(questions.filter(s => s.difficulty == "3").length);
+  console.log("Average difficulty: " + average(population[maxFitnessIndex]));
+  console.log("Total time: " + total(population[maxFitnessIndex]) + "s");
+  console.log("List of difficulty");
+
   population[maxFitnessIndex].map((p) => console.log(p.difficulty));
 
-  console.log(3);
-  console.log("Total ", population[maxFitnessIndex].length);
+  console.log("Total Question", population[maxFitnessIndex].length);
   return res.status(200).json({
     success: true,
     data: population[maxFitnessIndex],

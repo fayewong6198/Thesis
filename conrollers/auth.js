@@ -15,7 +15,6 @@ exports.getLogin = asyncHandler(async (req, res, next) => {
 // @route POST/auth/login
 // @access  Public
 exports.login = asyncHandler(async (req, res, next) => {
-  // await UserCourse.create({ user: req.user });
   const body = req.body;
 
   console.log(body);
@@ -34,7 +33,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   const token = await user.getSignedJwtToken();
-  console.log(token);
+
   res.status(200).json({ success: true, data: token });
 });
 

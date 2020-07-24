@@ -23,6 +23,8 @@ const RegisterScreen = ({ register, auth, navigation }) => {
   });
 
   const { email, password, name, confirmPassword } = formData;
+  const [student, setStudent] = useState(false);
+  const [teacher, setTeacher] = useState(false);
 
   const onChange = (name) => (value) => {
     setFormData({ ...formData, [name]: value });
@@ -78,6 +80,7 @@ const RegisterScreen = ({ register, auth, navigation }) => {
             onChangeText={onChange("confirmPassword")}
           ></TextInput>
         </View>
+
         <View style={styles.buttonContainer}>
           <TouchableHighlight
             style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
@@ -95,7 +98,6 @@ const RegisterScreen = ({ register, auth, navigation }) => {
             <Text style={styles.textStyle}>Back to login</Text>
           </TouchableHighlight>
         </View>
-        <Text>{auth.data}</Text>
       </View>
     </TouchableWithoutFeedback>
   );

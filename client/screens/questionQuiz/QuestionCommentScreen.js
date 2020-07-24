@@ -38,7 +38,7 @@ const QuestionCommentScreen = ({
   const [id, setId] = useState(null);
   const [questionText, setText] = useState(null);
   const [formData, setFormData] = useState({
-    text: "kkkkzz",
+    text: "",
   });
 
   const { text } = formData;
@@ -77,7 +77,9 @@ const QuestionCommentScreen = ({
   return (
     <View>
       <AlertComponent></AlertComponent>
-      <Text> {questionText && questionText} </Text>
+      <Text style={{ color: COLOR_BLUE_DARK, fontWeight: "bold" }}>
+        {questionText && questionText}{" "}
+      </Text>
 
       <View style={styles.createCommnentContainer}>
         <View style={{ flex: 1 }}>

@@ -45,7 +45,7 @@ const SelectDifficultyScreen = ({
               generateQuiz({ [chapter]: true }, questionBankId, 2.5, 100, true);
               navigation.replace("Learn", {
                 no: 0,
-                totalTime: 500,
+                totalTime: 100,
                 questionBankId,
                 chapter,
               });
@@ -63,14 +63,14 @@ const SelectDifficultyScreen = ({
               generateQuiz({ [chapter]: true }, questionBankId, 2.5, 100, true);
               navigation.replace("Learn", {
                 no: 0,
-                totalTime: 500,
+                totalTime: 100,
                 questionBankId,
                 chapter,
               });
             }}
           >
             <Text style={styles.textStyle}>
-              {userChapter && userChapter.elo} / 4
+              {userChapter && Math.round(userChapter.elo * 100) / 100} / 10
             </Text>
           </TouchableHighlight>
         </View>
