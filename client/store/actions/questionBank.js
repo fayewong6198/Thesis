@@ -28,14 +28,9 @@ const config = {
 export const loadQuestionBank = () => async (dispatch) => {
   try {
     const res = await axios.get(IP + ":5000/questions/user");
-    dispatch({
-      type: GET_QUESTION_BANK_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_QUESTION_BANK_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({
-      type: GET_QUESTION_BANK_FAILED,
-    });
+    dispatch({ type: GET_QUESTION_BANK_FAILED });
   }
 };
 
@@ -46,14 +41,9 @@ export const loadChapter = (questionBankId) => async (dispatch) => {
       IP + ":5000/questions/chapters/" + questionBankId
     );
 
-    dispatch({
-      type: GET_CHAPTER_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_CHAPTER_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({
-      type: GET_CHAPTER_FAILED,
-    });
+    dispatch({ type: GET_CHAPTER_FAILED });
   }
 };
 
@@ -66,14 +56,9 @@ export const loadUserChapter = (questionBankId) => async (dispatch) => {
 
     console.log(res.data);
 
-    dispatch({
-      type: GET_CHAPTER_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_CHAPTER_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({
-      type: GET_CHAPTER_FAILED,
-    });
+    dispatch({ type: GET_CHAPTER_FAILED });
   }
 };
 
@@ -85,14 +70,9 @@ export const loadQuestionInChapter = (QuestionBankId, id) => async (
       IP + `:5000/questions/${QuestionBankId}/chapter/${id}`
     );
 
-    dispatch({
-      type: GET_QUESTIONS_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_QUESTIONS_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({
-      type: GET_QUESTIONS_FAILED,
-    });
+    dispatch({ type: GET_QUESTIONS_FAILED });
   }
 };
 
@@ -100,14 +80,9 @@ export const getQuestion = (id) => async (dispatch) => {
   try {
     const res = await axios.get(IP + `:5000/question/${id}/user`);
 
-    dispatch({
-      type: GET_QUESTION_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_QUESTION_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({
-      type: GET_QUESTION_FAILED,
-    });
+    dispatch({ type: GET_QUESTION_FAILED });
   }
 };
 
@@ -130,36 +105,24 @@ export const generateQuiz = (
     body = JSON.stringify(body);
     const res = await axios.post(IP + ":5000/questions/quiz", body, config);
 
-    dispatch({
-      type: GENERATE_QUIZ_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GENERATE_QUIZ_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({
-      type: GENERATE_QUIZ_FAILED,
-    });
+    dispatch({ type: GENERATE_QUIZ_FAILED });
   }
 };
 
 export const loadAllQuestionBanks = () => async (dispatch) => {
   try {
     const res = await axios.get(IP + ":5000/questions");
-    dispatch({
-      type: GET_QUESTION_BANK_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_QUESTION_BANK_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({
-      type: GET_QUESTION_BANK_FAILED,
-    });
+    dispatch({ type: GET_QUESTION_BANK_FAILED });
   }
 };
 
 export const clearQuiz = () => (dispatch) => {
   console.log("Go to clear quiz");
-  dispatch({
-    type: CLEAR_QUIZ,
-  });
+  dispatch({ type: CLEAR_QUIZ });
 };
 
 export const getQuesionWhileDoingQuiz = (id) => async (dispatch) => {
@@ -169,16 +132,11 @@ export const getQuesionWhileDoingQuiz = (id) => async (dispatch) => {
     console.log(res.data);
 
     dispatch(setAlert("Get Question Success", "success"));
-    dispatch({
-      type: GET_QUESTION_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_QUESTION_SUCCESS, payload: res.data });
   } catch (error) {
     dispatch(setAlert("Get Question Error", "danger"));
 
-    dispatch({
-      type: GET_QUESTION_FAILED,
-    });
+    dispatch({ type: GET_QUESTION_FAILED });
   }
 };
 
@@ -190,16 +148,10 @@ export const submitQuiz = (formData) => async (dispatch) => {
 
     dispatch(setAlert("Submit success", "success"));
 
-    dispatch({
-      type: GET_USER_CHAPTER_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_USER_CHAPTER_SUCCESS, payload: res.data });
   } catch (error) {
     dispatch(setAlert("Submit error", "danger"));
-    dispatch({
-      type: GET_USER_CHAPTER_FAILED,
-      payload: res.data,
-    });
+    dispatch({ type: GET_USER_CHAPTER_FAILED, payload: res.data });
     console.log("Error");
   }
 };
@@ -219,17 +171,38 @@ export const getUserChapter = (questionBankId, chapterId) => async (
       config
     );
 
-    dispatch({
-      type: GET_USER_CHAPTER_SUCCESS,
-      payload: res.data,
-    });
+    dispatch({ type: GET_USER_CHAPTER_SUCCESS, payload: res.data });
   } catch (error) {
     dispatch(setAlert("Get user courses failed", "danger"));
 
     console.log(error);
 
-    dispatch({
-      type: GET_USER_CHAPTER_FAILED,
-    });
+    dispatch({ type: GET_USER_CHAPTER_FAILED });
+  }
+};
+
+export const generate100Quiz = (
+  chapter,
+  questionBank,
+  diff,
+  time = 500,
+  quiz = true
+) => async (dispatch) => {
+  console.log("generate 100 quiz");
+  try {
+    let body = {};
+
+    console.log("questionBank " + questionBank);
+    body.chapters = chapter;
+    body.diff = diff;
+    body.time = time;
+    body.questionBank = questionBank;
+    body.quiz = quiz;
+    body = JSON.stringify(body);
+    const res = await axios.post(IP + ":5000/questions/100quiz", body, config);
+
+    dispatch({ type: GENERATE_QUIZ_SUCCESS, payload: res.data });
+  } catch (error) {
+    dispatch({ type: GENERATE_QUIZ_FAILED });
   }
 };

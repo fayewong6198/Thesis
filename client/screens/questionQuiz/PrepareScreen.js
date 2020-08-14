@@ -10,7 +10,11 @@ import {
   TouchableHighlight,
 } from "react-native";
 import { connect } from "react-redux";
-import { loadChapter, generateQuiz } from "../../store/actions/questionBank";
+import {
+  loadChapter,
+  generateQuiz,
+  generate100Quiz,
+} from "../../store/actions/questionBank";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import MultiSelect from "react-native-multiple-select";
@@ -27,6 +31,7 @@ const PrepareScreen = ({
   loadChapter,
   chapters,
   generateQuiz,
+  generate100Quiz,
 }) => {
   const { questionBankId } = route.params;
 
@@ -69,9 +74,7 @@ const PrepareScreen = ({
       {chapters && chapters.length > 0 ? (
         <View>
           <FlatList
-            contentContainerStyle={{
-              marginLeft: 20,
-            }}
+            contentContainerStyle={{ marginLeft: 20 }}
             data={chapters}
             renderItem={({ item }) => (
               <TouchableNativeFeedback
@@ -84,7 +87,7 @@ const PrepareScreen = ({
                     id={item._id}
                     name={item._id}
                   ></CheckBox>
-                  <Text>{item.name}</Text>
+                  <Text> {item.name}</Text>
                 </View>
               </TouchableNativeFeedback>
             )}
@@ -92,10 +95,21 @@ const PrepareScreen = ({
           />
           <View style={styles.diffContainer}>
             <View style={{ flex: 1 }}>
-              <Text>Diffuculty: </Text>
+              <Text>Diffuculty:</Text>
             </View>
-            <View style={{ flex: 1, flexDirection: "row", padding: 10 }}>
-              <View style={{ flex: 1, alignItems: "center" }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                padding: 10,
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                }}
+              >
                 <MaterialIcons
                   name="remove"
                   size={32}
@@ -103,12 +117,23 @@ const PrepareScreen = ({
                   onPress={() => decressingDiff()}
                 />
               </View>
-              <View style={{ flex: 2, alignItems: "center" }}>
+              <View
+                style={{
+                  flex: 2,
+                  alignItems: "center",
+                }}
+              >
                 <Text style={{ textAlign: "center" }}>
-                  {diff.toFixed(2).toString()}
+                  {" "}
+                  {diff.toFixed(2).toString()}{" "}
                 </Text>
               </View>
-              <View style={{ flex: 1, alignItems: "center" }}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                }}
+              >
                 <MaterialIcons
                   name="add"
                   size={32}
@@ -120,10 +145,21 @@ const PrepareScreen = ({
           </View>
           <View style={styles.diffContainer}>
             <View style={{ flex: 1 }}>
-              <Text>Time: </Text>
+              <Text>Time:</Text>
             </View>
-            <View style={{ flex: 1, flexDirection: "row", padding: 10 }}>
-              <View style={{ flex: 1, alignItems: "center" }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                padding: 10,
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                }}
+              >
                 <MaterialIcons
                   name="remove"
                   size={32}
@@ -131,10 +167,20 @@ const PrepareScreen = ({
                   onPress={() => setTime(time - 50)}
                 />
               </View>
-              <View style={{ flex: 2, alignItems: "center" }}>
-                <Text style={{ textAlign: "center" }}>{time}</Text>
+              <View
+                style={{
+                  flex: 2,
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ textAlign: "center" }}> {time}</Text>
               </View>
-              <View style={{ flex: 1, alignItems: "center" }}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                }}
+              >
                 <MaterialIcons
                   name="add"
                   size={32}
@@ -154,7 +200,10 @@ const PrepareScreen = ({
           onPress={() => {
             generateQuiz(chapter, questionBankId, diff, time, false);
 
-            navigation.replace("Quiz", { no: 0, totalTime: time });
+            navigation.replace("Quiz", {
+              no: 0,
+              totalTime: time,
+            });
           }}
         >
           <Text style={styles.textStyle}>Start Quiz</Text>
@@ -165,9 +214,7 @@ const PrepareScreen = ({
 };
 
 const mapStateToProps = (state) => {
-  return {
-    chapters: state.questionBank.chapters,
-  };
+  return { chapters: state.questionBank.chapters };
 };
 
 const styles = StyleSheet.create({
@@ -213,6 +260,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps, { loadChapter, generateQuiz })(
-  PrepareScreen
-);
+export default connect(mapStateToProps, {
+  loadChapter,
+  generateQuiz,
+  generate100Quiz,
+})(PrepareScreen);

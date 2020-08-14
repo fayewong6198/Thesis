@@ -95,7 +95,6 @@ exports.getUserCourse = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.addCourse = asyncHandler(async (req, res, next) => {
   const questionBank = await QuestionBank.findById(req.params.id);
-  console.log(1);
   if (!questionBank) {
     return next(new ErrorResponse("Question Bank not found", 400));
   }
@@ -105,19 +104,17 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
     user: req.user._id,
     questionBank: questionBank,
   });
-  console.log(2);
   // Check dupplicate
   if (course) {
     return next(new ErrorResponse("Course is already added"));
   }
-  console.log(3);
   course = await UserCourse.create({
     user: req.user._id,
     questionBank: questionBank,
   });
 
   // Create UserChapter
-  console.log(4);
+  // UserChapter contain Elo ratings of user on that chapter
   chapters = await Chapter.find({ questionBank: questionBank });
   chapters = JSON.parse(JSON.stringify(chapters));
 
@@ -127,7 +124,6 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
       userCourse: course._id,
     });
   }
-  console.log(5);
   user = await User.findById(req.user.id);
   return res.status(200).json({ success: true, data: user });
 });

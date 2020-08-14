@@ -37,12 +37,25 @@ const SelectDifficultyScreen = ({
       <AlertComponent></AlertComponent>
       {userChapter != null && userChapter.elo == null ? (
         <View style={styles.buttonContainer}>
-          <Text>{userChapter.elo}</Text>
+          <Text> {userChapter.elo}</Text>
           <TouchableHighlight
-            style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
+            style={[
+              styles.button,
+              {
+                backgroundColor: COLOR_PRIMARY,
+              },
+            ]}
             onPress={() => {
               // getQuesionWhileDoingQuiz(chapter);
-              generateQuiz({ [chapter]: true }, questionBankId, 2.5, 100, true);
+              generateQuiz(
+                {
+                  [chapter]: true,
+                },
+                questionBankId,
+                2.5,
+                100,
+                true
+              );
               navigation.replace("Learn", {
                 no: 0,
                 totalTime: 100,
@@ -57,10 +70,23 @@ const SelectDifficultyScreen = ({
       ) : (
         <View style={styles.buttonContainer}>
           <TouchableHighlight
-            style={[styles.button, { backgroundColor: COLOR_PRIMARY }]}
+            style={[
+              styles.button,
+              {
+                backgroundColor: COLOR_PRIMARY,
+              },
+            ]}
             onPress={() => {
               // getQuesionWhileDoingQuiz(chapter);
-              generateQuiz({ [chapter]: true }, questionBankId, 2.5, 100, true);
+              generateQuiz(
+                {
+                  [chapter]: true,
+                },
+                questionBankId,
+                2.5,
+                100,
+                true
+              );
               navigation.replace("Learn", {
                 no: 0,
                 totalTime: 100,
@@ -70,7 +96,7 @@ const SelectDifficultyScreen = ({
             }}
           >
             <Text style={styles.textStyle}>
-              {userChapter && Math.round(userChapter.elo * 100) / 100} / 10
+              {userChapter && Math.round(userChapter.elo * 100) / 100}/ 10
             </Text>
           </TouchableHighlight>
         </View>
