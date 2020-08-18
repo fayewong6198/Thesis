@@ -10,15 +10,19 @@ import {
   TouchableHighlight,
   Modal,
   Alert,
+  Image,
 } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import AlertComponent from "../../components/AlertComponent";
 import axios from "axios";
+import { IP } from "../../config/config";
+
 // action
 import { clearQuiz } from "../../store/actions/questionBank";
 import { createNote, getNote, clearNote, vote } from "../../store/actions/note";
 import { MaterialIcons } from "@expo/vector-icons";
+
 import {
   COLOR_SECONDARY,
   COLOR_PRIMARY,
@@ -229,6 +233,23 @@ const QuizScreen = ({
                     />
                   </View>
                   <View style={styles.modalContent}>
+                    {note &&
+                      note.length > 0 &&
+                      note[noteNumber].images &&
+                      note[noteNumber].images.length > 0 && (
+                        <View style={styles.image}>
+                          <Image
+                            source={{
+                              uri: `${IP}:5000/uploads/${note[noteNumber].images[0].url}`,
+                            }}
+                            style={{
+                              width: 200,
+                              height: 200,
+                              borderRadius: 100,
+                            }}
+                          ></Image>
+                        </View>
+                      )}
                     {note && note.length > 0 ? (
                       <Text> {note[noteNumber].text}</Text>
                     ) : (

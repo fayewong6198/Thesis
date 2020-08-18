@@ -69,7 +69,7 @@ const fitnessFunction = (e) => {
   // return (2 / (1 + e) - 1) * (2 / (1 + e) - 1) * (2 / (1 + e) - 1);
   // return (2 / (1 + e) - 1) * (2 / (1 + e) - 1);
   // return 2 / (1 + e) - 1;
-  // return 1 - e;
+  // return (1 - e) * (1 - e);
   return 1 - e;
 };
 
@@ -601,9 +601,9 @@ exports.generate100Quiz = asyncHandler(async (req, res, next) => {
     }).populate({ path: "chapter", select: "name" });
 
     JSON.parse(JSON.stringify(questions));
-    if (DIFFICULTY >= 8) {
-      questions = questions.filter((question) => question.difficulty >= 7);
-    }
+    // if (DIFFICULTY >= 8) {
+    //   questions = questions.filter((question) => question.difficulty >= 7);
+    // }
     if (DIFFICULTY <= 3) {
       questions = questions.filter((question) => question.difficulty <= 4);
     }
