@@ -16,6 +16,7 @@ import { loadQuestionBank } from "../../store/actions/questionBank";
 import { logout, loadUser } from "../../store/actions/auth";
 import AlertComponent from "../../components/AlertComponent";
 import { COLOR_BLUE } from "../../config/color";
+import { IP } from "../../config/config";
 
 const HomeScreen = ({ loadQuestionBank, auth, navigation }) => {
   useEffect(() => {
@@ -23,7 +24,7 @@ const HomeScreen = ({ loadQuestionBank, auth, navigation }) => {
     if (auth.isAuthenticated) loadQuestionBank();
   }, []);
   let preview = "Home";
-  const IP = "http://192.168.0.101";
+
   const getDocument = async () => {
     const data = await DocumentPicker.getDocumentAsync();
     console.log(data);
