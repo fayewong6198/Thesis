@@ -17,6 +17,7 @@ const {
   getQuestionsWhileDoingQuiz,
   submitQuiz,
   getUserChapter,
+  generate100Quiz,
 } = require("../conrollers/questions");
 router
   .route("/")
@@ -37,6 +38,7 @@ router.route("/user").get(protected, getQuestionBanks);
 
 router.route("/user/chapters/:id").get(protected, getUserChapterQuestionBanks);
 router.route("/quiz").post(protected, generateQuiz);
+router.route("/100quiz").post(protected, generate100Quiz);
 
 router
   .route("/:questionBankId/chapter/:chapterId")

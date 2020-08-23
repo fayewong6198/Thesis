@@ -10,15 +10,19 @@ import {
   TouchableHighlight,
   Modal,
   Alert,
+  Image,
 } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import AlertComponent from "../../components/AlertComponent";
 import axios from "axios";
-//action
+import { IP } from "../../config/config";
+
+// action
 import { clearQuiz } from "../../store/actions/questionBank";
 import { createNote, getNote, clearNote, vote } from "../../store/actions/note";
 import { MaterialIcons } from "@expo/vector-icons";
+
 import {
   COLOR_SECONDARY,
   COLOR_PRIMARY,
@@ -76,7 +80,10 @@ const QuizScreen = ({
       for (let j = 0; j < textss[i].length; j++) {
         textViews[i].push(
           <Text
-            style={{ color: COLOR_BLUE_DARK, fontWeight: "bold" }}
+            style={{
+              color: COLOR_BLUE_DARK,
+              fontWeight: "bold",
+            }}
             key={j}
             onPress={async () => {
               try {
@@ -89,7 +96,7 @@ const QuizScreen = ({
               }
             }}
           >
-            <Text>{textss[i][j]} </Text>
+            <Text> {textss[i][j]} </Text>
           </Text>
         );
       }
@@ -175,6 +182,7 @@ const QuizScreen = ({
     else if (num === 2) return "c";
     else if (num === 3) return "d";
     else if (num === 4) return "e";
+
     return "f";
   };
   return (
@@ -206,7 +214,7 @@ const QuizScreen = ({
                   />
                 </View>
 
-                <Text style={styles.modalText}>{term}</Text>
+                <Text style={styles.modalText}> {term}</Text>
 
                 <View style={styles.modalMainContent}>
                   <View
@@ -225,8 +233,25 @@ const QuizScreen = ({
                     />
                   </View>
                   <View style={styles.modalContent}>
+                    {note &&
+                      note.length > 0 &&
+                      note[noteNumber].images &&
+                      note[noteNumber].images.length > 0 && (
+                        <View style={styles.image}>
+                          <Image
+                            source={{
+                              uri: `${IP}:5000/uploads/${note[noteNumber].images[0].url}`,
+                            }}
+                            style={{
+                              width: 200,
+                              height: 200,
+                              borderRadius: 100,
+                            }}
+                          ></Image>
+                        </View>
+                      )}
                     {note && note.length > 0 ? (
-                      <Text>{note[noteNumber].text}</Text>
+                      <Text> {note[noteNumber].text}</Text>
                     ) : (
                       <Text>Note is not available</Text>
                     )}
@@ -255,9 +280,7 @@ const QuizScreen = ({
                       size={24}
                       color={COLOR_PRIMARY}
                       onPress={() => {
-                        vote(term, note[noteNumber].user, {
-                          action: "upVote",
-                        });
+                        vote(term, note[noteNumber].user, { action: "upVote" });
                       }}
                     />
                     <Text style={styles.upvoteText}>
@@ -312,14 +335,18 @@ const QuizScreen = ({
             </View>
           </Modal>
         )}
-
       <View style={styles.time}>
         {time >= 0 ? (
           <Text>
-            You have{" "}
-            <Text style={{ color: COLOR_SECONDARY, fontWeight: "bold" }}>
+            You have
+            <Text
+              style={{
+                color: COLOR_SECONDARY,
+                fontWeight: "bold",
+              }}
+            >
               {time}s
-            </Text>{" "}
+            </Text>
             left
           </Text>
         ) : (
@@ -348,16 +375,20 @@ const QuizScreen = ({
             >
               <MaterialIcons name="navigate-before" size={24} color="black" />
             </TouchableHighlight>
-            <View style={{ flex: 10, padding: 10 }}>
+            <View
+              style={{
+                flex: 10,
+                padding: 10,
+              }}
+            >
               <FlatList
                 data={quiz[numOfQuestion].answer}
                 renderItem={({ item }) => (
                   <View>
                     <View style={styles.checkBoxContainer}>
                       <View style={styles.answerText}>
-                        <Text>{item}</Text>
+                        <Text> {item}</Text>
                       </View>
-
                       <CheckBox
                         value={
                           (answer[numOfQuestion] &&
@@ -367,7 +398,6 @@ const QuizScreen = ({
                         disabled={submited}
                         onChange={() => answerHandler(numOfQuestion, item)}
                       ></CheckBox>
-
                       {submited && (
                         <CheckBox
                           value={
@@ -390,9 +420,7 @@ const QuizScreen = ({
                 if (numOfQuestion < quiz.length - 1)
                   setNumOfQuestion(numOfQuestion + 1);
               }}
-              style={{
-                flex: 1,
-              }}
+              style={{ flex: 1 }}
             >
               <MaterialIcons name="navigate-next" size={24} color="black" />
             </TouchableHighlight>
@@ -428,9 +456,9 @@ const QuizScreen = ({
             <Text style={styles.seeAnswer}>See answer</Text>
           </TouchableHighlight>
 
-          <Text>Your Score is </Text>
+          <Text>Your Score is</Text>
           <Text style={styles.score}>
-            {score} / {totalScore}
+            {score}/ {totalScore}
           </Text>
         </View>
       )}

@@ -1,40 +1,44 @@
 const mongoose = require("mongoose");
 
-const NoteSchema = new mongoose.Schema(
-  {
+const NoteSchema = new mongoose.Schema({
     key: {
-      type: String,
-      required: true,
+        type: String,
+        required: true
     },
     text: {
-      type: String,
-      default: "",
+        type: String,
+        default: ""
     },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     },
 
     createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  {
+        type: Date,
+        default: Date.now
+    }
+}, {
     toJSON: {
-      virtuals: true,
+        virtuals: true
     },
     toObject: {
-      virtuals: true,
-    },
-  }
-);
+        virtuals: true
+    }
+});
 
 NoteSchema.virtual("votes", {
-  ref: "Vote",
-  localField: "_id",
-  foreignField: "note",
-  justOne: false,
+    ref: "Vote",
+    localField: "_id",
+    foreignField: "note",
+    justOne: false
+});
+
+NoteSchema.virtual("images", {
+    ref: "NoteImage",
+    localField: "_id",
+    foreignField: "note",
+    justOne: false
 });
 
 module.exports = mongoose.model("Note", NoteSchema);

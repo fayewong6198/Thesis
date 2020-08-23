@@ -10,11 +10,13 @@ import {
   TouchableHighlight,
   Modal,
   Alert,
+  Image,
 } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import AlertComponent from "../../components/AlertComponent";
 import axios from "axios";
+import { IP } from "../../config/config";
 //action
 import {
   clearQuiz,
@@ -94,7 +96,9 @@ const LearnScreen = ({
             onPress={async () => {
               try {
                 setPos(j);
+                // Get note from server
                 getNote(showText(textss[i][j]));
+
                 setTerm(showText(textss[i][j]));
                 setModalVisible(true);
               } catch (error) {
@@ -289,6 +293,23 @@ const LearnScreen = ({
                     />
                   </View>
                   <View style={styles.modalContent}>
+                    {note &&
+                      note.length > 0 &&
+                      note[noteNumber].images &&
+                      note[noteNumber].images.length > 0 && (
+                        <View style={styles.image}>
+                          <Image
+                            source={{
+                              uri: `${IP}:5000/uploads/${note[noteNumber].images[0].url}`,
+                            }}
+                            style={{
+                              width: 200,
+                              height: 200,
+                              borderRadius: 100,
+                            }}
+                          ></Image>
+                        </View>
+                      )}
                     {note && note.length > 0 ? (
                       <Text>{note[noteNumber].text}</Text>
                     ) : (

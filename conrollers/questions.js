@@ -43,6 +43,7 @@ function shuffleArray(array) {
 const average = (array) => {
   let result = 0;
   for (let i = 0; i < array.length; i++) result += array[i].difficulty;
+
   return result / array.length;
 };
 
@@ -53,6 +54,7 @@ const abs = (number) => {
 const total = (array) => {
   let result = 0;
   for (let i = 0; i < array.length; i++) result += array[i].time;
+
   return result;
 };
 
@@ -64,7 +66,11 @@ const error = (quiz) => {
 };
 
 const fitnessFunction = (e) => {
-  return (2 / (1 + e) - 1) * (2 / (1 + e) - 1) * (2 / (1 + e) - 1);
+  // return (2 / (1 + e) - 1) * (2 / (1 + e) - 1) * (2 / (1 + e) - 1);
+  // return (2 / (1 + e) - 1) * (2 / (1 + e) - 1);
+  // return 2 / (1 + e) - 1;
+  // return (1 - e) * (1 - e);
+  return 1 - e;
 };
 
 // @desc  Create a question bank
@@ -115,6 +121,7 @@ exports.createQuestionBank = asyncHandler(async (req, res, next) => {
     else if (question.chapter == 4) chapter = chapter4;
     else if (question.chapter == 5) chapter = chapter5;
     else if (question.chapter == 6) chapter = chapter6;
+
     Question.create({
       text: question.text,
       answer: question.answer,
@@ -166,9 +173,8 @@ exports.getUserChapterQuestionBanks = asyncHandler(async (req, res, next) => {
 
   if (!questionBanks)
     return next(new ErrorResponse("QuestionBank not found", 404));
-  const chapters = await Chapter.find({
-    questionBank: req.params.id,
-  });
+
+  const chapters = await Chapter.find({ questionBank: req.params.id });
 
   return res.status(200).json({ success: true, data: chapters });
 });
@@ -189,16 +195,14 @@ exports.getUserQuestions = asyncHandler(async (req, res, next) => {
   }
 
   // if (
-  //   questionBanks.user != mongoose.Types.ObjectId(req.user.id) ||
-  //   req.user.role != "admin"
+  // questionBanks.user != mongoose.Types.ObjectId(req.user.id) ||
+  // req.user.role != "admin"
   // ) {
-  //   console.log(questionBanks.user);
-  //   return next(new ErrorResponse("UnAuthorized", 400));
+  // console.log(questionBanks.user);
+  // return next(new ErrorResponse("UnAuthorized", 400));
   // }
 
-  const questions = await Question.find({
-    chapter: req.params.chapterId,
-  });
+  const questions = await Question.find({ chapter: req.params.chapterId });
 
   return res.status(200).json({ success: true, data: questions });
 });
@@ -208,9 +212,7 @@ exports.getUserQuestions = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.getUserQuestion = asyncHandler(async (req, res, next) => {
   console.log(req.user.id);
-  const question = await Question.findOne({
-    _id: req.params.id,
-  });
+  const question = await Question.findOne({ _id: req.params.id });
 
   if (!question) {
     return next(new ErrorResponse("Question not found", 404));
@@ -292,6 +294,7 @@ exports.getChapters = asyncHandler(async (req, res, next) => {
 // @route POST questionBank/quiz
 // @access  Private
 exports.generateQuiz = asyncHandler(async (req, res, next) => {
+  const startTime = Date.now();
   let chapters = [];
 
   DIFFICULTY = req.body.diff;
@@ -303,6 +306,7 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
       req.body.chapters[key] === true
     )
       chapters.push(key);
+
   if (req.body.quiz == true) {
     chapter = chapters[0];
 
@@ -333,27 +337,27 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
       console.log(userChapter.elo);
       console.log(DIFFICULTY);
       if (DIFFICULTY < 3) {
-        DIFFICULTY = 2;
+        DIFFICULTY = 3;
       }
       if (DIFFICULTY > 8) {
         DIFFICULTY = 8;
       }
     }
-
     TIME = 100;
   }
 
   console.log("DIFFFFFFFFF ", DIFFICULTY);
-  let questions = await Question.find({ chapter: { $in: chapters } }).populate({
-    path: "chapter",
-    select: "name",
-  });
+  let questions = await Question.find({
+    chapter: {
+      $in: chapters,
+    },
+  }).populate({ path: "chapter", select: "name" });
 
   JSON.parse(JSON.stringify(questions));
   if (DIFFICULTY >= 8) {
-    questions = questions.filter((question) => question.difficulty >= 8);
+    questions = questions.filter((question) => question.difficulty >= 7);
   }
-  if (DIFFICULTY <= 4) {
+  if (DIFFICULTY <= 3) {
     questions = questions.filter((question) => question.difficulty <= 4);
   }
 
@@ -444,11 +448,16 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
   }
   console.log("Average difficulty: " + average(population[maxFitnessIndex]));
   console.log("Total time: " + total(population[maxFitnessIndex]) + "s");
-  console.log("List of difficulty");
+  console.log("List of question");
 
-  population[maxFitnessIndex].map((p) => console.log(p.difficulty));
+  population[maxFitnessIndex].map((p) =>
+    console.log("Difficulty:", p.difficulty, "Time:", p.time)
+  );
 
   console.log("Total Question", population[maxFitnessIndex].length);
+  const endTime = Date.now();
+
+  console.log("Time process:", endTime - startTime + "ms");
   return res.status(200).json({
     success: true,
     data: population[maxFitnessIndex],
@@ -523,4 +532,180 @@ exports.getUserChapter = asyncHandler(async (req, res, next) => {
   });
 
   return res.status(200).json({ success: true, data: userChapter });
+});
+
+// @desc  Generate Test Quiz
+// @route POST questionBank/100quiz
+// @access  Private
+exports.generate100Quiz = asyncHandler(async (req, res, next) => {
+  const veryStartTime = Date.now();
+  for (let i = 0; i < 100; i++) {
+    console.log(i);
+    const startTime = Date.now();
+    let chapters = [];
+
+    DIFFICULTY = req.body.diff;
+
+    TIME = req.body.time || 500;
+    for (let key in req.body.chapters)
+      if (
+        req.body.chapters.hasOwnProperty(key) &&
+        req.body.chapters[key] === true
+      )
+        chapters.push(key);
+
+    if (req.body.quiz == true) {
+      chapter = chapters[0];
+
+      let userCourse = await UserCourse.findOne({
+        user: req.user.id,
+        questionBank: req.body.questionBank,
+      });
+
+      if (!userCourse) {
+        console.log(req.body);
+        return next(new ErrorResponse("User course not found", 400));
+      }
+
+      let userChapter = await UserChapter.findOne({
+        userCourse: userCourse,
+        chapter: chapter,
+      });
+
+      console.log(userChapter);
+      if (userChapter.elo == null) {
+        console.log("userChapter.elo  is null");
+        DIFFICULTY = 5;
+      } else {
+        console.log("userChapter.elo  is not null");
+
+        // console.log(userChapter);
+        DIFFICULTY = userChapter.elo;
+        console.log(userChapter.elo);
+        console.log(DIFFICULTY);
+        if (DIFFICULTY < 3) {
+          DIFFICULTY = 3;
+        }
+        if (DIFFICULTY > 8) {
+          DIFFICULTY = 8;
+        }
+      }
+      TIME = 100;
+    }
+
+    console.log("DIFFFFFFFFF ", DIFFICULTY);
+    let questions = await Question.find({
+      chapter: {
+        $in: chapters,
+      },
+    }).populate({ path: "chapter", select: "name" });
+
+    JSON.parse(JSON.stringify(questions));
+    // if (DIFFICULTY >= 8) {
+    //   questions = questions.filter((question) => question.difficulty >= 7);
+    // }
+    if (DIFFICULTY <= 3) {
+      questions = questions.filter((question) => question.difficulty <= 4);
+    }
+
+    let population = [];
+    let test = [];
+
+    for (let i = 0; i < MAX_SIZE; i++) {
+      if ((i + 1) % QUESTION_PER_TEST != 0) {
+        test.push(questions[i % questions.length]);
+      } else {
+        population.push(test);
+        test = [];
+      }
+    }
+
+    population.pop();
+
+    // Error function
+    let maxFitness = 0;
+    let maxFitnessIndex = 0;
+    population.forEach((pop) => {
+      const fitness = fitnessFunction(error(pop));
+      maxFitness = fitness > maxFitness ? fitness : maxFitness;
+    });
+    console.log(maxFitness);
+
+    while (maxFitness < THRESS_HOLD) {
+      for (let i = 0; i < population.length; i++) {
+        // First Parent
+        let a = Math.floor(Math.random() * population.length);
+        let r = Math.random() * maxFitness;
+        while (r > fitnessFunction(error(population[a]))) {
+          a = Math.floor(Math.random() * population.length);
+          r = Math.random() * maxFitness;
+        }
+
+        // Second Parent
+        let b = Math.floor(Math.random() * population.length);
+        r = Math.random() * maxFitness;
+        while (r > fitnessFunction(error(population[b]))) {
+          b = Math.floor(Math.random() * population.length);
+          r = Math.random() * maxFitness;
+        }
+
+        const ids = new Set(population[a].map((data) => data.id));
+        let merged = [
+          ...population[a],
+          ...population[b].filter((d) => !ids.has(d.id)),
+        ];
+        shuffleArray(merged);
+        let time_test = 0;
+        a = [];
+        b = 0;
+
+        while (time_test < TIME && b < merged.length) {
+          a.push(merged[b]);
+
+          time_test += merged[b].time;
+
+          b++;
+        }
+        if (
+          time_test - a[a.length - 1].time >
+          a[a.length - 1].time - a[a.length - 2].time
+        ) {
+          a.pop();
+        }
+        population[i] = a;
+        // Mutation Operator
+        r = Math.random();
+        if (r < 0.01) {
+          let j = Math.floor(Math.random() * questions.length);
+          let k = Math.floor(Math.random() * population[i].length);
+          population[i][k] = questions[j];
+        }
+      }
+      let averageFitness = 0;
+      for (let i = 0; i < population.length; i++) {
+        const fitness = fitnessFunction(error(population[i]));
+        if (fitness > maxFitness) {
+          maxFitness = fitness;
+          maxFitnessIndex = i;
+        }
+        averageFitness += fitness;
+      }
+
+      console.log(averageFitness / population.length + " " + maxFitness);
+    }
+    // console.log("Average difficulty: " + average(population[maxFitnessIndex]));
+    // console.log("Total time: " + total(population[maxFitnessIndex]) + "s");
+    // console.log("List of question");
+
+    // population[maxFitnessIndex].map((p) => console.log("Difficulty:", p.difficulty, "Time:", p.time));
+
+    // console.log("Total Question", population[maxFitnessIndex].length);
+    const endTime = Date.now();
+
+    console.log(`Time process: #${i}`, endTime - startTime + "ms");
+  }
+  const veryEndTime = Date.now();
+  console.log(`Total Time process:`, veryEndTime - veryStartTime + "ms");
+
+  return res.status(200).json({ success: true });
 });
