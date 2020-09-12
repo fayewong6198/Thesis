@@ -58,6 +58,7 @@ export const loadUser = (component = "app") => async (dispatch) => {
 };
 
 export const login = (formData) => async (dispatch) => {
+  console.log("cc");
   const body = JSON.stringify(formData);
   try {
     const config = {
@@ -65,6 +66,7 @@ export const login = (formData) => async (dispatch) => {
         "Content-Type": "application/json",
       },
     };
+    console.log(IP);
     const res = await axios.post(IP + ":5000/auth/login", body, config);
     console.log("Before navigate");
 

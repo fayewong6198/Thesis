@@ -12,12 +12,12 @@ const UserChapter = require("../models/UserChapter");
 // Algorithm
 const N = 500;
 let TIME = 500;
-const MAX_SIZE = TIME * 20;
+const MAX_SIZE = 5000;
 const QUESTION_PER_TEST = TIME / 20;
 let DIFFICULTY = 2.4;
 const TIME_WEIGHT = 0.2;
 const DIFFICULTY_WEIGHT = 0.8;
-const THRESS_HOLD = 0.85;
+const THRESS_HOLD = 0.99;
 
 const leftLineProba = (userDiff, standardDiff) => {
   return (1 / standardDiff) * userDiff;
@@ -347,18 +347,19 @@ exports.generateQuiz = asyncHandler(async (req, res, next) => {
   }
 
   console.log("DIFFFFFFFFF ", DIFFICULTY);
+  console.log(chapters);
   let questions = await Question.find({
     chapter: {
       $in: chapters,
     },
   }).populate({ path: "chapter", select: "name" });
-
+  console.log("ahihi");
   JSON.parse(JSON.stringify(questions));
   if (DIFFICULTY >= 8) {
     questions = questions.filter((question) => question.difficulty >= 7);
   }
   if (DIFFICULTY <= 3) {
-    questions = questions.filter((question) => question.difficulty <= 4);
+    questions = questions.filter((question) => question.difficulty <= 5);
   }
 
   let population = [];
@@ -583,12 +584,12 @@ exports.generate100Quiz = asyncHandler(async (req, res, next) => {
         DIFFICULTY = userChapter.elo;
         console.log(userChapter.elo);
         console.log(DIFFICULTY);
-        if (DIFFICULTY < 3) {
-          DIFFICULTY = 3;
-        }
-        if (DIFFICULTY > 8) {
-          DIFFICULTY = 8;
-        }
+        // if (DIFFICULTY < 3) {
+        //   DIFFICULTY = 3;
+        // }
+        // if (DIFFICULTY > 8) {
+        //   DIFFICULTY = 8;
+        // }
       }
       TIME = 100;
     }
@@ -601,16 +602,16 @@ exports.generate100Quiz = asyncHandler(async (req, res, next) => {
     }).populate({ path: "chapter", select: "name" });
 
     JSON.parse(JSON.stringify(questions));
-    // if (DIFFICULTY >= 8) {
-    //   questions = questions.filter((question) => question.difficulty >= 7);
-    // }
+    if (DIFFICULTY >= 8) {
+      questions = questions.filter((question) => question.difficulty >= 7);
+    }
     if (DIFFICULTY <= 3) {
       questions = questions.filter((question) => question.difficulty <= 4);
     }
 
     let population = [];
     let test = [];
-
+    shuffleArray(questions);
     for (let i = 0; i < MAX_SIZE; i++) {
       if ((i + 1) % QUESTION_PER_TEST != 0) {
         test.push(questions[i % questions.length]);

@@ -29,10 +29,13 @@ const LoginScreen = ({ login, auth, navigation, logout, LogoutAction }) => {
   const { email, password } = formData;
 
   const onChange = (name) => (value) => {
+    console.log(value);
+    console.log("asdasdasdasd");
     setFormData({ ...formData, [name]: value });
   };
 
   const onSubmit = (e) => {
+    console.log("before login");
     login(formData);
   };
   return (
@@ -48,6 +51,7 @@ const LoginScreen = ({ login, auth, navigation, logout, LogoutAction }) => {
             name="email"
             onChangeText={(e) => {
               onChange("email")(e);
+              console.log("asdasd");
             }}
           ></TextInput>
         </View>
@@ -74,7 +78,10 @@ const LoginScreen = ({ login, auth, navigation, logout, LogoutAction }) => {
 
           <TouchableHighlight
             style={styles.secondaryButton}
-            onPress={() => navigation.navigate("Register")}
+            onPress={() => {
+              console.log("navigate");
+              navigation.navigate("Register");
+            }}
           >
             <Text style={styles.textStyle}>Register</Text>
           </TouchableHighlight>

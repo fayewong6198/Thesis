@@ -142,7 +142,7 @@ exports.voteUserNote = asyncHandler(async (req, res, next) => {
 });
 
 // @des Upload photo for Note
-// @route PUT /api/notes/:id/image
+// @route PUT /api/notes/:key/image
 // @access  Private
 exports.noteImageUpload = asyncHandler(async (req, res, next) => {
   const note = await Note.findOne({ key: req.params.key });

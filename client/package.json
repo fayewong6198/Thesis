@@ -17,6 +17,7 @@
     "buffer": "^5.5.0",
     "expo": "~36.0.0",
     "expo-cli": "^3.20.3",
+    "expo-constants": "~8.0.0",
     "expo-document-picker": "~8.0.0",
     "expo-file-system": "~8.0.0",
     "expo-image-picker": "~8.0.1",
@@ -44,8 +45,8 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "babel-preset-expo": "~8.0.0",
-    "@babel/core": "^7.0.0"
+    "@babel/core": "^7.0.0",
+    "babel-preset-expo": "~8.0.0"
   },
   "private": true,
   "proxy": "http://192.168.1.28:5000"

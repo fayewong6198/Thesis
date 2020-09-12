@@ -42,7 +42,7 @@ const QuestionBankItem = ({
       console.log("------------------------------------------------");
       setUserCourses(courses);
     }
-  }, user);
+  }, [user]);
 
   useEffect(() => {
     console.log(userCourses);
